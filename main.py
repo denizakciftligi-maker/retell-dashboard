@@ -227,3 +227,4 @@ def get_analytics(period: str = "daily", conn=Depends(get_db), _=Depends(verify)
 def dashboard(_=Depends(verify)):
     with open("index.html", "r", encoding="utf-8") as f:
         return f.read()
+
