@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deniz Bey Çiftliği — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --olive: #4a5c2f;
+  --olive-light: #6b7f45;
+  --olive-pale: #f0f2e8;
+  --gold: #c9a84c;
+  --gold-light: #f0d98a;
+  --dark: #1a1f0e;
+  --mid: #3d4a25;
+  --text: #2c3318;
+  --muted: #7a8562;
+  --white: #fafaf5;
+  --border: #d8dcc8;
+  --red: #c0392b;
+  --green: #27ae60;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--white); color: var(--text); min-height: 100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 220px;
+  background: var(--dark); padding: 0;
+  display: flex; flex-direction: column;
+  z-index: 100;
+}
+.logo {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.logo h1 { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--gold); font-weight: 600; line-height: 1.3; }
+.logo p { font-size: 11px; color: var(--muted); margin-top: 4px; letter-spacing: .5px; }
+nav { padding: 16px 0; flex: 1; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 24px; cursor: pointer;
+  font-size: 13px; color: rgba(255,255,255,0.55);
+  transition: all .2s; border-left: 3px solid transparent;
+}
+.nav-item:hover { color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.04); }
+.nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,0.08); }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar-footer {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 11px; color: var(--muted);
+}
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); display: inline-block; margin-right: 6px; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* MAIN */
+.main { margin-left: 220px; padding: 32px; min-height: 100vh; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* HEADER */
+.page-header { margin-bottom: 28px; }
+.page-header h2 { font-family: 'Playfair Display', serif; font-size: 26px; color: var(--dark); font-weight: 600; }
+.page-header p { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+/* STAT CARDS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+.stat-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px;
+  position: relative; overflow: hidden;
+}
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--olive);
+}
+.stat-label { font-size: 11px; color: var(--muted); letter-spacing: .5px; text-transform: uppercase; }
+.stat-value { font-size: 32px; font-weight: 500; color: var(--dark); margin: 6px 0 2px; line-height: 1; }
+.stat-sub { font-size: 12px; color: var(--muted); }
+
+/* TABLE */
+.table-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.table-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.table-header h3 { font-size: 14px; font-weight: 500; color: var(--dark); }
+.refresh-btn { font-size: 12px; color: var(--olive); cursor: pointer; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; background: none; }
+.refresh-btn:hover { background: var(--olive-pale); }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; background: var(--olive-pale); border-bottom: 1px solid var(--border); }
+td { padding: 12px 16px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--olive-pale); }
+.badge { display: inline-block; padding: 3px 8px; border-radius: 20px; font-size: 11px; font-weight: 500; }
+.badge-green { background: #e8f5e9; color: #2e7d32; }
+.badge-gray { background: #f5f5f5; color: #757575; }
+.badge-gold { background: #fff8e1; color: #f57f17; }
+.phone { font-family: monospace; font-size: 12px; color: var(--muted); }
+.clickable { cursor: pointer; }
+.clickable:hover { text-decoration: underline; color: var(--olive); }
+.audio-btn { font-size: 11px; color: var(--olive-light); cursor: pointer; padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; background: none; white-space: nowrap; }
+.audio-btn:hover { background: var(--olive-pale); }
+
+/* DETAIL PANEL */
+.detail-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; }
+.detail-overlay.open { display: block; }
+.detail-panel {
+  position: absolute; right: 0; top: 0; bottom: 0; width: 480px;
+  background: var(--white); overflow-y: auto; padding: 28px;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+}
+.detail-close { position: absolute; top: 20px; right: 20px; font-size: 20px; cursor: pointer; color: var(--muted); background: none; border: none; }
+.detail-title { font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 20px; color: var(--dark); }
+.detail-section { margin-bottom: 20px; }
+.detail-section h4 { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 8px; }
+.detail-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; }
+.detail-row label { color: var(--muted); min-width: 100px; }
+.transcript-line { padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 13px; line-height: 1.5; }
+.transcript-agent { background: var(--olive-pale); border-left: 3px solid var(--olive); }
+.transcript-user { background: #fff8e1; border-left: 3px solid var(--gold); }
+.transcript-role { font-size: 10px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 2px; }
+
+/* LOADING */
+.loading { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
+.empty { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .sidebar { width: 60px; }
+  .sidebar .logo h1, .sidebar .logo p, .nav-item span, .sidebar-footer { display: none; }
+  .nav-item { padding: 12px; justify-content: center; }
+  .main { margin-left: 60px; padding: 20px; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .detail-panel { width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">
+    <h1>Deniz Bey Çiftliği</h1>
+    <p>Satış Paneli</p>
+  </div>
+  <nav>
+    <div class="nav-item active" onclick="showPage('panel')">
+      <span class="nav-icon">📊</span>
+      <span>Ana Panel</span>
+    </div>
+    <div class="nav-item" onclick="showPage('aramalar')">
+      <span class="nav-icon">📞</span>
+      <span>Aramalar</span>
+    </div>
+    <div class="nav-item" onclick="showPage('musteriler')">
+      <span class="nav-icon">👥</span>
+      <span>Müşteriler</span>
+    </div>
+    <div class="nav-item" onclick="showPage('siparisler')">
+      <span class="nav-icon">📦</span>
+      <span>Siparişler</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <span class="status-dot"></span>Sistem aktif
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- ANA PANEL -->
+  <div class="page active" id="page-panel">
+    <div class="page-header">
+      <h2>Ana Panel</h2>
+      <p id="bugun-tarih"></p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Bugün Arama</div>
+        <div class="stat-value" id="stat-arama">—</div>
+        <div class="stat-sub">toplam arama</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Bugün Sipariş</div>
+        <div class="stat-value" id="stat-siparis">—</div>
+        <div class="stat-sub">onaylı sipariş</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Yeni Müşteri</div>
+        <div class="stat-value" id="stat-musteri">—</div>
+        <div class="stat-sub">bugün kayıt</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Toplam Arama</div>
+        <div class="stat-value" id="stat-toplam">—</div>
+        <div class="stat-sub">tüm zamanlar</div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Son Aramalar</h3>
+        <button class="refresh-btn" onclick="loadCalls()">↻ Yenile</button>
+      </div>
+      <div id="son-aramalar-container"><div class="loading">Yükleniyor...</div></div>
+    </div>
+  </div>
+
+  <!-- ARAMALAR -->
+  <div class="page" id="page-aramalar">
+    <div class="page-header">
+      <h2>Tüm Aramalar</h2>
+      <p>Tüm arama kayıtları ve detayları</p>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Aramalar</h3>
+        <button class="refresh-btn" onclick="loadAllCalls()">↻ Yenile</button>
+      </div>
+      <div id="aramalar-container"><div class="loading">Yükleniyor...</div></div>
+    </div>
+  </div>
+
+  <!-- MÜŞTERİLER -->
+  <div class="page" id="page-musteriler">
+    <div class="page-header">
+      <h2>Müşteriler</h2>
+      <p>Kayıtlı müşteri listesi</p>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Müşteriler</h3>
+        <button class="refresh-btn" onclick="loadCustomers()">↻ Yenile</button>
+      </div>
+      <div id="musteriler-container"><div class="loading">Yükleniyor...</div></div>
+    </div>
+  </div>
+
+  <!-- SİPARİŞLER -->
+  <div class="page" id="page-siparisler">
+    <div class="page-header">
+      <h2>Siparişler</h2>
+      <p>Sipariş verilen aramalar</p>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Siparişler</h3>
+        <button class="refresh-btn" onclick="loadOrders()">↻ Yenile</button>
+      </div>
+      <div id="siparisler-container"><div class="loading">Yükleniyor...</div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- DETAIL PANEL -->
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetail(event)">
+  <div class="detail-panel" id="detail-panel">
+    <button class="detail-close" onclick="closeDetailPanel()">✕</button>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<script>
+const fmt = (d) => d ? new Date(d).toLocaleString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+const dur = (s) => s ? `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}` : '—';
+
+document.getElementById('bugun-tarih').textContent = new Date().toLocaleDateString('tr-TR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (name === 'panel') { loadStats(); loadCalls(); }
+  if (name === 'aramalar') loadAllCalls();
+  if (name === 'musteriler') loadCustomers();
+  if (name === 'siparisler') loadOrders();
+}
+
+async function loadStats() {
+  try {
+    const r = await fetch('/api/stats');
+    const d = await r.json();
+    document.getElementById('stat-arama').textContent = d.bugun_arama || 0;
+    document.getElementById('stat-siparis').textContent = d.bugun_siparis || 0;
+    document.getElementById('stat-musteri').textContent = d.yeni_musteri || 0;
+    document.getElementById('stat-toplam').textContent = d.toplam_arama || 0;
+  } catch(e) { console.error(e); }
+}
+
+function callRow(c, short=true) {
+  const sd = c.summary_data || {};
+  const siparis = sd.siparis_var_mi;
+  const isim = [c.name, c.surname].filter(Boolean).join(' ') || '—';
+  return `<tr>
+    <td>${fmt(c.started_at)}</td>
+    <td class="phone">${c.phone_number || '—'}</td>
+    <td class="clickable" onclick="loadDetail('${c.call_id}')">${isim}</td>
+    ${short ? '' : `<td>${sd.siparis_detayi || '—'}</td>`}
+    <td>${dur(c.duration_s)}</td>
+    <td>${siparis ? '<span class="badge badge-gold">📦 Sipariş</span>' : '<span class="badge badge-gray">Görüşme</span>'}</td>
+    <td>${c.recording_url ? `<button class="audio-btn" onclick="window.open('${c.recording_url}','_blank')">▶ Dinle</button>` : '—'}</td>
+  </tr>`;
+}
+
+async function loadCalls() {
+  const r = await fetch('/api/calls?limit=20');
+  const calls = await r.json();
+  const el = document.getElementById('son-aramalar-container');
+  if (!calls.length) { el.innerHTML = '<div class="empty">Henüz arama yok</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Tarih</th><th>Numara</th><th>Müşteri</th><th>Süre</th><th>Durum</th><th>Kayıt</th></tr></thead><tbody>${calls.map(c=>callRow(c,true)).join('')}</tbody></table>`;
+}
+
+async function loadAllCalls() {
+  const r = await fetch('/api/calls?limit=200');
+  const calls = await r.json();
+  const el = document.getElementById('aramalar-container');
+  if (!calls.length) { el.innerHTML = '<div class="empty">Henüz arama yok</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Tarih</th><th>Numara</th><th>Müşteri</th><th>Sipariş</th><th>Süre</th><th>Durum</th><th>Kayıt</th></tr></thead><tbody>${calls.map(c=>callRow(c,false)).join('')}</tbody></table>`;
+}
+
+async function loadCustomers() {
+  const r = await fetch('/api/customers');
+  const data = await r.json();
+  const el = document.getElementById('musteriler-container');
+  if (!data.length) { el.innerHTML = '<div class="empty">Henüz müşteri yok</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Numara</th><th>İsim</th><th>Adres</th><th>Arama</th><th>İlk Arama</th><th>Son Arama</th></tr></thead><tbody>${data.map(c=>`
+    <tr>
+      <td class="phone">${c.phone_number}</td>
+      <td>${[c.name,c.surname].filter(Boolean).join(' ') || '—'}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.address || '—'}</td>
+      <td><span class="badge badge-green">${c.call_count || 0}</span></td>
+      <td>${fmt(c.first_call_at)}</td>
+      <td>${fmt(c.last_call_at)}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+async function loadOrders() {
+  const r = await fetch('/api/orders');
+  const data = await r.json();
+  const el = document.getElementById('siparisler-container');
+  if (!data.length) { el.innerHTML = '<div class="empty">Henüz sipariş yok</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Tarih</th><th>Müşteri</th><th>Numara</th><th>Sipariş</th><th>Tutar</th><th>Ödeme</th><th>Adres</th></tr></thead><tbody>${data.map(o=>`
+    <tr>
+      <td>${fmt(o.started_at)}</td>
+      <td>${[o.name,o.surname].filter(Boolean).join(' ') || '—'}</td>
+      <td class="phone">${o.phone_number || '—'}</td>
+      <td><strong>${o.siparis_detayi || '—'}</strong></td>
+      <td>${o.tutar || '—'}</td>
+      <td>${o.odeme_yontemi || '—'}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${o.adres || '—'}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+async function loadDetail(callId) {
+  document.getElementById('detail-content').innerHTML = '<div class="loading">Yükleniyor...</div>';
+  document.getElementById('detail-overlay').classList.add('open');
+  const r = await fetch(`/api/calls/${callId}`);
+  const c = await r.json();
+  const sd = c.summary_data || {};
+  const isim = [c.name, c.surname].filter(Boolean).join(' ') || '—';
+  document.getElementById('detail-content').innerHTML = `
+    <div class="detail-title">${isim}</div>
+    <div class="detail-section">
+      <h4>Arama Bilgisi</h4>
+      <div class="detail-row"><label>Numara</label><span class="phone">${c.phone_number || '—'}</span></div>
+      <div class="detail-row"><label>Tarih</label><span>${fmt(c.started_at)}</span></div>
+      <div class="detail-row"><label>Süre</label><span>${dur(c.duration_s)}</span></div>
+      ${c.recording_url ? `<div class="detail-row"><label>Kayıt</label><button class="audio-btn" onclick="window.open('${c.recording_url}','_blank')">▶ Dinle</button></div>` : ''}
+    </div>
+    ${sd.siparis_var_mi ? `
+    <div class="detail-section">
+      <h4>Sipariş Detayı</h4>
+      <div class="detail-row"><label>Ürün</label><span><strong>${sd.siparis_detayi || '—'}</strong></span></div>
+      <div class="detail-row"><label>Tutar</label><span>${sd.tutar || '—'}</span></div>
+      <div class="detail-row"><label>Ödeme</label><span>${sd.odeme_yontemi || '—'}</span></div>
+      <div class="detail-row"><label>Adres</label><span>${sd.adres || '—'}</span></div>
+    </div>` : ''}
+    ${sd.ozet ? `
+    <div class="detail-section">
+      <h4>Özet</h4>
+      <p style="font-size:13px;line-height:1.6;color:var(--text)">${sd.ozet}</p>
+    </div>` : ''}
+    ${c.transcripts && c.transcripts.length ? `
+    <div class="detail-section">
+      <h4>Konuşma</h4>
+      ${c.transcripts.map(t=>`
+        <div class="transcript-line ${t.role === 'agent' ? 'transcript-agent' : 'transcript-user'}">
+          <div class="transcript-role">${t.role === 'agent' ? '🤖 Pınar' : '👤 Müşteri'}</div>
+          ${t.content}
+        </div>`).join('')}
+    </div>` : ''}
+  `;
+}
+
+function closeDetail(e) {
+  if (e.target === document.getElementById('detail-overlay')) closeDetailPanel();
+}
+function closeDetailPanel() {
+  document.getElementById('detail-overlay').classList.remove('open');
+}
+
+// İlk yükleme
+loadStats();
+loadCalls();
+</script>
+</body>
+</html>
