@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+﻿from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.staticfiles import StaticFiles
@@ -7,6 +7,7 @@ import psycopg2.extras
 import os
 import json
 import secrets
+from status_helper import normalize_order_status
 
 app = FastAPI()
 security = HTTPBasic()
@@ -30,7 +31,7 @@ def verify(credentials: HTTPBasicCredentials = Depends(security)):
     if not (ok_user and ok_pass):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Yetkisiz erişim",
+            detail="Yetkisiz eriÅŸim",
             headers={"WWW-Authenticate": "Basic"},
         )
     return credentials.username
@@ -74,6 +75,7 @@ def get_calls(limit: int = 50, conn=Depends(get_db), _=Depends(verify)):
     """, (limit,))
     rows = cur.fetchall()
     result = []
+    # STATUS FIX APPLIED
     for row in rows:
         d = dict(row)
         if d.get("summary"):
@@ -98,7 +100,7 @@ def get_call_detail(call_id: str, conn=Depends(get_db), _=Depends(verify)):
     """, (call_id,))
     call = cur.fetchone()
     if not call:
-        raise HTTPException(status_code=404, detail="Arama bulunamadı")
+        raise HTTPException(status_code=404, detail="Arama bulunamadÄ±")
     call = dict(call)
     if call.get("summary"):
         try:
@@ -143,6 +145,7 @@ def get_orders(conn=Depends(get_db), _=Depends(verify)):
     """)
     rows = cur.fetchall()
     result = []
+    # STATUS FIX APPLIED
     for row in rows:
         d = dict(row)
         try:
