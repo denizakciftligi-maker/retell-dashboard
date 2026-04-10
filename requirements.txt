@@ -1,0 +1,7 @@
+fastapi==0.111.0
+uvicorn==0.30.0
+pydantic==2.7.0
+google-auth==2.29.0
+google-auth-oauthlib==1.2.0
+google-api-python-client==2.128.0
+supabase==2.4.0
