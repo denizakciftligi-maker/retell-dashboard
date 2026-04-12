@@ -40,14 +40,20 @@ nav { padding: 12px 0; flex: 1; }
 .stat-label { font-size: 11px; color: var(--muted); letter-spacing: .5px; text-transform: uppercase; }
 .stat-value { font-size: 30px; font-weight: 500; color: var(--dark); margin: 5px 0 2px; line-height: 1; }
 .stat-sub { font-size: 12px; color: var(--muted); }
+.action-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+.action-bar-btn { padding: 10px 18px; border-radius: 8px; font-size: 13px; cursor: pointer; font-family: inherit; font-weight: 500; border: none; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+.btn-primary { background: var(--olive); color: white; }
+.btn-primary:hover { background: var(--olive-light); }
+.btn-secondary { background: var(--white); color: var(--text); border: 1px solid var(--border) !important; border: none; }
+.btn-secondary:hover { background: var(--olive-pale); }
+.btn-gold { background: var(--gold); color: white; }
+.btn-gold:hover { background: #b8963e; }
 .toolbar { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
 .search-input { flex: 1; min-width: 200px; padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit; background: var(--white); color: var(--text); outline: none; }
 .search-input:focus { border-color: var(--olive); }
 .search-input::placeholder { color: var(--muted); }
 .toolbar-btn { padding: 8px 14px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: inherit; font-weight: 500; border: 1px solid var(--border); background: var(--white); color: var(--text); white-space: nowrap; }
 .toolbar-btn:hover { background: var(--olive-pale); }
-.toolbar-btn.danger { color: var(--red); border-color: #ffcdd2; }
-.toolbar-btn.danger:hover { background: #ffebee; }
 .toolbar-btn.active-tab { background: var(--olive); color: white; border-color: var(--olive); }
 .table-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
 .table-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
@@ -102,6 +108,28 @@ tr:hover td { background: var(--olive-pale); }
 .close-day-banner p { font-size: 13px; color: var(--text); }
 .close-day-btn { padding: 9px 20px; background: var(--orange); color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; font-family: inherit; white-space: nowrap; }
 .close-day-btn:hover { background: #d35400; }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 300; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--white); border-radius: 16px; padding: 28px; width: 480px; max-width: 95vw; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+.modal h3 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--dark); margin-bottom: 20px; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .5px; }
+.form-input { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit; background: var(--white); color: var(--text); outline: none; }
+.form-input:focus { border-color: var(--olive); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 20px; }
+.modal-btn { padding: 9px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; font-family: inherit; font-weight: 500; border: none; }
+.modal-btn-cancel { background: var(--olive-pale); color: var(--text); }
+.modal-btn-save { background: var(--olive); color: white; }
+.modal-btn-save:hover { background: var(--olive-light); }
+.search-results { max-height: 200px; overflow-y: auto; border: 1px solid var(--border); border-radius: 8px; margin-top: 4px; display: none; }
+.search-result-item { padding: 10px 12px; cursor: pointer; font-size: 13px; border-bottom: 1px solid var(--border); }
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: var(--olive-pale); }
+.search-result-item strong { display: block; }
+.search-result-item span { color: var(--muted); font-size: 12px; }
 </style>
 </head>
 <body>
@@ -133,12 +161,21 @@ tr:hover td { background: var(--olive-pale); }
       </div>
       <div class="header-clock" id="header-clock">00:00</div>
     </div>
+
+    <!-- HIZLI İŞLEM BUTONLARI -->
+    <div class="action-bar">
+      <button class="action-bar-btn btn-primary" onclick="openModal('musteri-ekle')">➕ Müşteri Ekle</button>
+      <button class="action-bar-btn btn-secondary" onclick="openModal('musteri-guncelle')">✏️ Müşteri Güncelle</button>
+      <button class="action-bar-btn btn-gold" onclick="openModal('siparis-olustur')">📦 Sipariş Oluştur</button>
+    </div>
+
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-label">Bugün Arama</div><div class="stat-value" id="stat-arama">—</div><div class="stat-sub">toplam arama</div></div>
       <div class="stat-card"><div class="stat-label">Bugün Sipariş</div><div class="stat-value" id="stat-siparis">—</div><div class="stat-sub">yeni sipariş</div></div>
       <div class="stat-card"><div class="stat-label">Bekleyen</div><div class="stat-value" id="stat-bekleyen">—</div><div class="stat-sub">onay bekliyor</div></div>
       <div class="stat-card"><div class="stat-label">Kargoda</div><div class="stat-value" id="stat-kargo">—</div><div class="stat-sub">yolda</div></div>
     </div>
+
     <div class="table-card">
       <div class="table-header"><h3>Son Aramalar</h3><button class="refresh-btn" onclick="loadCalls()">↻ Yenile</button></div>
       <div id="son-aramalar-container"><div class="loading">Yükleniyor...</div></div>
@@ -148,25 +185,19 @@ tr:hover td { background: var(--olive-pale); }
   <!-- SİPARİŞLER -->
   <div class="page" id="page-siparisler">
     <div class="page-header">
-      <div class="page-header-left">
-        <h2>Siparişler</h2>
-        <p>Aktif sipariş yönetimi</p>
-      </div>
+      <div class="page-header-left"><h2>Siparişler</h2><p>Aktif sipariş yönetimi</p></div>
       <div class="header-clock" id="siparis-clock">00:00</div>
     </div>
-
     <div class="close-day-banner">
-      <p>🔒 Günü kapatmak tüm aktif siparişleri arşivler. Arşivlenen siparişler <strong>Arşiv</strong> sekmesinde görünür.</p>
+      <p>🔒 Günü kapatmak tüm aktif siparişleri arşivler.</p>
       <button class="close-day-btn" onclick="closeDay()">🔒 Günü Kapat</button>
     </div>
-
     <div class="toolbar">
       <input type="text" class="search-input" id="siparis-search" placeholder="🔍 İsim, numara, adres, ürün veya tarih ara..." oninput="searchOrders(this.value)">
       <button class="toolbar-btn active-tab" id="tab-aktif" onclick="switchOrderTab('aktif')">📦 Aktif</button>
       <button class="toolbar-btn" id="tab-arsiv" onclick="switchOrderTab('arsiv')">🗃️ Arşiv</button>
       <button class="refresh-btn" onclick="loadOrders()">↻</button>
     </div>
-
     <div class="table-card">
       <div id="siparisler-container"><div class="loading">Yükleniyor...</div></div>
     </div>
@@ -174,47 +205,34 @@ tr:hover td { background: var(--olive-pale); }
 
   <!-- ARAMALAR -->
   <div class="page" id="page-aramalar">
-    <div class="page-header">
-      <div class="page-header-left"><h2>Aramalar</h2><p>Tüm arama kayıtları</p></div>
-    </div>
+    <div class="page-header"><div class="page-header-left"><h2>Aramalar</h2><p>Tüm arama kayıtları</p></div></div>
     <div class="toolbar">
       <input type="text" class="search-input" id="arama-search" placeholder="🔍 İsim veya numara ara..." oninput="searchCalls(this.value)">
       <button class="refresh-btn" onclick="loadAllCalls()">↻ Yenile</button>
     </div>
-    <div class="table-card">
-      <div id="aramalar-container"><div class="loading">Yükleniyor...</div></div>
-    </div>
+    <div class="table-card"><div id="aramalar-container"><div class="loading">Yükleniyor...</div></div></div>
   </div>
 
   <!-- MÜŞTERİLER -->
   <div class="page" id="page-musteriler">
-    <div class="page-header">
-      <div class="page-header-left"><h2>Müşteriler</h2><p>Kayıtlı müşteri listesi</p></div>
-    </div>
+    <div class="page-header"><div class="page-header-left"><h2>Müşteriler</h2><p>Kayıtlı müşteri listesi</p></div></div>
     <div class="toolbar">
       <input type="text" class="search-input" id="musteri-search" placeholder="🔍 İsim, numara veya adres ara..." oninput="searchCustomers(this.value)">
       <button class="refresh-btn" onclick="loadCustomers()">↻ Yenile</button>
     </div>
-    <div class="table-card">
-      <div id="musteriler-container"><div class="loading">Yükleniyor...</div></div>
-    </div>
+    <div class="table-card"><div id="musteriler-container"><div class="loading">Yükleniyor...</div></div></div>
   </div>
 
   <!-- ANALİTİK -->
   <div class="page" id="page-analytics">
-    <div class="page-header">
-      <div class="page-header-left"><h2>Analitik</h2><p>Sipariş istatistikleri</p></div>
-    </div>
+    <div class="page-header"><div class="page-header-left"><h2>Analitik</h2><p>Sipariş istatistikleri</p></div></div>
     <div class="analytics-tabs">
       <button class="analytics-tab active" onclick="loadAnalytics('daily', this)">Günlük</button>
       <button class="analytics-tab" onclick="loadAnalytics('weekly', this)">Haftalık</button>
       <button class="analytics-tab" onclick="loadAnalytics('monthly', this)">Aylık</button>
     </div>
-    <div class="table-card">
-      <div id="analytics-container"><div class="loading">Yükleniyor...</div></div>
-    </div>
+    <div class="table-card"><div id="analytics-container"><div class="loading">Yükleniyor...</div></div></div>
   </div>
-
 </div>
 
 <!-- DETAIL PANEL -->
@@ -225,24 +243,97 @@ tr:hover td { background: var(--olive-pale); }
   </div>
 </div>
 
+<!-- MÜŞTERİ EKLE MODAL -->
+<div class="modal-overlay" id="modal-musteri-ekle">
+  <div class="modal">
+    <h3>➕ Yeni Müşteri Ekle</h3>
+    <div class="form-row">
+      <div class="form-group"><label>Ad</label><input class="form-input" id="yeni-ad" placeholder="Deniz"></div>
+      <div class="form-group"><label>Soyad</label><input class="form-input" id="yeni-soyad" placeholder="Ak"></div>
+    </div>
+    <div class="form-group"><label>Telefon Numarası *</label><input class="form-input" id="yeni-tel" placeholder="+905010851988"></div>
+    <div class="form-group"><label>Adres</label><input class="form-input" id="yeni-adres" placeholder="Mahalle, Sokak, No, Şehir"></div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal('musteri-ekle')">İptal</button>
+      <button class="modal-btn modal-btn-save" onclick="musteriEkle()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- MÜŞTERİ GÜNCELLE MODAL -->
+<div class="modal-overlay" id="modal-musteri-guncelle">
+  <div class="modal">
+    <h3>✏️ Müşteri Güncelle</h3>
+    <div class="form-group">
+      <label>Müşteri Ara (isim veya numara)</label>
+      <input class="form-input" id="guncelle-ara" placeholder="İsim veya numara yaz..." oninput="musteriAra(this.value)">
+      <div class="search-results" id="guncelle-sonuclar"></div>
+    </div>
+    <div id="guncelle-form" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label>Ad</label><input class="form-input" id="guncelle-ad"></div>
+        <div class="form-group"><label>Soyad</label><input class="form-input" id="guncelle-soyad"></div>
+      </div>
+      <div class="form-group"><label>Telefon</label><input class="form-input" id="guncelle-tel" readonly style="background:#f5f5f5"></div>
+      <div class="form-group"><label>Adres</label><input class="form-input" id="guncelle-adres"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal('musteri-guncelle')">İptal</button>
+      <button class="modal-btn modal-btn-save" onclick="musteriGuncelle()" id="btn-guncelle-kaydet" style="display:none">Güncelle</button>
+    </div>
+  </div>
+</div>
+
+<!-- SİPARİŞ OLUŞTUR MODAL -->
+<div class="modal-overlay" id="modal-siparis-olustur">
+  <div class="modal">
+    <h3>📦 Manuel Sipariş Oluştur</h3>
+    <div class="form-group">
+      <label>Müşteri Ara (isim veya numara)</label>
+      <input class="form-input" id="siparis-musteri-ara" placeholder="İsim veya numara yaz..." oninput="siparisMusteriAra(this.value)">
+      <div class="search-results" id="siparis-musteri-sonuclar"></div>
+    </div>
+    <div id="siparis-form" style="display:none">
+      <div class="form-row">
+        <div class="form-group"><label>Ad</label><input class="form-input" id="siparis-ad"></div>
+        <div class="form-group"><label>Soyad</label><input class="form-input" id="siparis-soyad"></div>
+      </div>
+      <div class="form-group"><label>Telefon</label><input class="form-input" id="siparis-tel"></div>
+      <div class="form-group"><label>Sipariş Detayı *</label><input class="form-input" id="siparis-detay" placeholder="ör: 10 kg Siyah Zeytin"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Tutar</label><input class="form-input" id="siparis-tutar" placeholder="ör: 500 TL"></div>
+        <div class="form-group"><label>Ödeme</label>
+          <select class="form-input" id="siparis-odeme">
+            <option value="Kapıda ödeme">Kapıda ödeme</option>
+            <option value="Online ödeme">Online ödeme</option>
+            <option value="Havale">Havale</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group"><label>Adres</label><input class="form-input" id="siparis-adres"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal('siparis-olustur')">İptal</button>
+      <button class="modal-btn modal-btn-save" onclick="siparisOlustur()" id="btn-siparis-kaydet" style="display:none">Sipariş Oluştur</button>
+    </div>
+  </div>
+</div>
+
 <script>
-// SAAT
 function updateClocks() {
   const now = new Date();
   const timeStr = now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'});
-  document.getElementById('sidebar-clock').textContent = timeStr;
-  document.getElementById('header-clock').textContent = timeStr;
-  document.getElementById('siparis-clock').textContent = timeStr;
+  ['sidebar-clock','header-clock','siparis-clock'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = timeStr; });
 }
-updateClocks();
-setInterval(updateClocks, 1000);
+updateClocks(); setInterval(updateClocks, 1000);
 
 const fmt = (d) => d ? new Date(d).toLocaleString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
 const dur = (s) => s ? Math.floor(s/60)+'dk '+String(s%60).padStart(2,'0')+'sn' : '—';
-
 document.getElementById('bugun-tarih').textContent = new Date().toLocaleDateString('tr-TR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
 let orderTab = 'aktif';
+let selectedCustomer = null;
+let selectedCustomerForOrder = null;
 
 function showPage(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -256,6 +347,127 @@ function showPage(name, el) {
   if (name === 'analytics') loadAnalytics('daily');
 }
 
+// MODAL
+function openModal(name) {
+  document.getElementById('modal-' + name).classList.add('open');
+}
+function closeModal(name) {
+  document.getElementById('modal-' + name).classList.remove('open');
+  if (name === 'musteri-guncelle') { selectedCustomer = null; document.getElementById('guncelle-form').style.display='none'; document.getElementById('btn-guncelle-kaydet').style.display='none'; document.getElementById('guncelle-ara').value=''; document.getElementById('guncelle-sonuclar').style.display='none'; }
+  if (name === 'siparis-olustur') { selectedCustomerForOrder = null; document.getElementById('siparis-form').style.display='none'; document.getElementById('btn-siparis-kaydet').style.display='none'; document.getElementById('siparis-musteri-ara').value=''; document.getElementById('siparis-musteri-sonuclar').style.display='none'; }
+}
+
+// MÜŞTERİ EKLE
+async function musteriEkle() {
+  const tel = document.getElementById('yeni-tel').value.trim();
+  if (!tel) { alert('Telefon numarası zorunlu!'); return; }
+  try {
+    const r = await fetch('/api/customers', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ phone_number: tel, name: document.getElementById('yeni-ad').value.trim(), surname: document.getElementById('yeni-soyad').value.trim(), address: document.getElementById('yeni-adres').value.trim() })
+    });
+    const d = await r.json();
+    if (!r.ok) { alert('Hata: ' + (d.detail || 'Bilinmeyen hata')); return; }
+    alert('✅ Müşteri eklendi!');
+    closeModal('musteri-ekle');
+    ['yeni-ad','yeni-soyad','yeni-tel','yeni-adres'].forEach(id => document.getElementById(id).value = '');
+  } catch(e) { alert('Bağlantı hatası'); }
+}
+
+// MÜŞTERİ ARA (güncelle için)
+let araTimeout = null;
+async function musteriAra(val) {
+  clearTimeout(araTimeout);
+  if (!val || val.length < 2) { document.getElementById('guncelle-sonuclar').style.display='none'; return; }
+  araTimeout = setTimeout(async () => {
+    const r = await fetch(`/api/customers?search=${encodeURIComponent(val)}`);
+    const data = await r.json();
+    const el = document.getElementById('guncelle-sonuclar');
+    if (!data.length) { el.style.display='none'; return; }
+    el.innerHTML = data.slice(0,5).map(c => `<div class="search-result-item" onclick="musteriSec(${JSON.stringify(c).replace(/"/g,'&quot;')})"><strong>${[c.name,c.surname].filter(Boolean).join(' ')||'—'}</strong><span>${c.phone_number} ${c.address?'· '+c.address.substring(0,30):''}...</span></div>`).join('');
+    el.style.display = 'block';
+  }, 300);
+}
+
+function musteriSec(c) {
+  selectedCustomer = c;
+  document.getElementById('guncelle-ad').value = c.name || '';
+  document.getElementById('guncelle-soyad').value = c.surname || '';
+  document.getElementById('guncelle-tel').value = c.phone_number || '';
+  document.getElementById('guncelle-adres').value = c.address || '';
+  document.getElementById('guncelle-form').style.display = 'block';
+  document.getElementById('btn-guncelle-kaydet').style.display = 'inline-block';
+  document.getElementById('guncelle-sonuclar').style.display = 'none';
+  document.getElementById('guncelle-ara').value = [c.name,c.surname].filter(Boolean).join(' ');
+}
+
+async function musteriGuncelle() {
+  if (!selectedCustomer) return;
+  try {
+    const r = await fetch(`/api/customers/${encodeURIComponent(selectedCustomer.phone_number)}`, {
+      method: 'PATCH', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name: document.getElementById('guncelle-ad').value.trim(), surname: document.getElementById('guncelle-soyad').value.trim(), address: document.getElementById('guncelle-adres').value.trim() })
+    });
+    if (!r.ok) { const d = await r.json(); alert('Hata: ' + (d.detail||'Bilinmeyen')); return; }
+    alert('✅ Müşteri güncellendi!');
+    closeModal('musteri-guncelle');
+    loadCustomers();
+  } catch(e) { alert('Bağlantı hatası'); }
+}
+
+// SİPARİŞ OLUŞTUR - müşteri arama
+async function siparisMusteriAra(val) {
+  clearTimeout(araTimeout);
+  if (!val || val.length < 2) { document.getElementById('siparis-musteri-sonuclar').style.display='none'; return; }
+  araTimeout = setTimeout(async () => {
+    const r = await fetch(`/api/customers?search=${encodeURIComponent(val)}`);
+    const data = await r.json();
+    const el = document.getElementById('siparis-musteri-sonuclar');
+    if (!data.length) { el.style.display='none'; return; }
+    el.innerHTML = data.slice(0,5).map(c => `<div class="search-result-item" onclick="siparisMusteriSec(${JSON.stringify(c).replace(/"/g,'&quot;')})"><strong>${[c.name,c.surname].filter(Boolean).join(' ')||'—'}</strong><span>${c.phone_number}</span></div>`).join('');
+    el.style.display = 'block';
+  }, 300);
+}
+
+function siparisMusteriSec(c) {
+  selectedCustomerForOrder = c;
+  document.getElementById('siparis-ad').value = c.name || '';
+  document.getElementById('siparis-soyad').value = c.surname || '';
+  document.getElementById('siparis-tel').value = c.phone_number || '';
+  document.getElementById('siparis-adres').value = c.address || '';
+  document.getElementById('siparis-form').style.display = 'block';
+  document.getElementById('btn-siparis-kaydet').style.display = 'inline-block';
+  document.getElementById('siparis-musteri-sonuclar').style.display = 'none';
+  document.getElementById('siparis-musteri-ara').value = [c.name,c.surname].filter(Boolean).join(' ');
+}
+
+async function siparisOlustur() {
+  const detay = document.getElementById('siparis-detay').value.trim();
+  const tel = document.getElementById('siparis-tel').value.trim();
+  if (!detay) { alert('Sipariş detayı zorunlu!'); return; }
+  if (!tel) { alert('Müşteri seçin!'); return; }
+  try {
+    const r = await fetch('/api/orders', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        phone_number: tel,
+        name: document.getElementById('siparis-ad').value.trim(),
+        surname: document.getElementById('siparis-soyad').value.trim(),
+        address: document.getElementById('siparis-adres').value.trim(),
+        siparis_detayi: detay,
+        tutar: document.getElementById('siparis-tutar').value.trim(),
+        odeme_yontemi: document.getElementById('siparis-odeme').value,
+        status: 'new'
+      })
+    });
+    if (!r.ok) { const d = await r.json(); alert('Hata: ' + (d.detail||'Bilinmeyen')); return; }
+    alert('✅ Sipariş oluşturuldu!');
+    closeModal('siparis-olustur');
+    document.getElementById('siparis-detay').value=''; document.getElementById('siparis-tutar').value='';
+    loadStats(); loadOrders();
+  } catch(e) { alert('Bağlantı hatası'); }
+}
+
 function switchOrderTab(tab) {
   orderTab = tab;
   document.getElementById('tab-aktif').classList.toggle('active-tab', tab === 'aktif');
@@ -265,12 +477,7 @@ function switchOrderTab(tab) {
 
 function statusBadge(s, archived) {
   if (archived) return '<span class="badge badge-archived">🗃️ Arşiv</span>';
-  const map = {
-    new: '<span class="badge badge-gold">🆕 Yeni</span>',
-    cancelled: '<span class="badge badge-red">❌ İptal</span>',
-    postponed: '<span class="badge badge-orange">⏭ Ertelendi</span>',
-    shipped: '<span class="badge badge-blue">📦 Kargoda</span>',
-  };
+  const map = { new:'<span class="badge badge-gold">🆕 Yeni</span>', cancelled:'<span class="badge badge-red">❌ İptal</span>', postponed:'<span class="badge badge-orange">⏭ Ertelendi</span>', shipped:'<span class="badge badge-blue">📦 Kargoda</span>' };
   return map[s] || s;
 }
 
@@ -279,48 +486,36 @@ function orderButtons(order) {
   const s = order.status;
   if (s === 'cancelled') return '<span style="font-size:11px;color:var(--muted)">İptal</span>';
   if (s === 'shipped') return '<span style="font-size:11px;color:var(--blue)">Kargoda</span>';
-  let btns = `<button class="action-btn btn-cancel" onclick="updateOrderStatus('${order.id}','cancelled')">❌ İptal</button>`;
-  if (s === 'new') btns += `<button class="action-btn btn-postpone" onclick="updateOrderStatus('${order.id}','postponed')">⏭ Ertele</button>`;
-  btns += `<button class="action-btn btn-ship" onclick="updateOrderStatus('${order.id}','shipped')">📦 Kargo</button>`;
+  let btns = `<button class="action-btn btn-cancel" onclick="updateOrderStatus('${order.id}','cancelled')">❌</button>`;
+  if (s === 'new') btns += `<button class="action-btn btn-postpone" onclick="updateOrderStatus('${order.id}','postponed')">⏭</button>`;
+  btns += `<button class="action-btn btn-ship" onclick="updateOrderStatus('${order.id}','shipped')">📦</button>`;
   return `<div class="action-btns">${btns}</div>`;
 }
 
 async function updateOrderStatus(orderId, newStatus) {
   const labels = {cancelled:'İptal', postponed:'Ertele', shipped:'Kargoya ver'};
-  if (!confirm(`Siparişi "${labels[newStatus]}" olarak güncellemek istiyor musunuz?`)) return;
+  if (!confirm(`"${labels[newStatus]}" olarak güncellensin mi?`)) return;
   try {
-    const r = await fetch(`/api/orders/${orderId}/status`, {
-      method: 'PATCH', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({status: newStatus})
-    });
-    if (!r.ok) { const err = await r.json(); alert('Hata: ' + (err.detail || 'Bilinmeyen hata')); return; }
+    const r = await fetch(`/api/orders/${orderId}/status`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:newStatus}) });
+    if (!r.ok) { const err = await r.json(); alert('Hata: '+(err.detail||'Bilinmeyen')); return; }
     loadOrders(); loadStats();
   } catch(e) { alert('Bağlantı hatası'); }
 }
 
 async function closeDay() {
-  if (!confirm('Günü kapatmak istediğinizden emin misiniz?\n\nTüm aktif siparişler arşivlenecek.')) return;
+  if (!confirm('Günü kapatmak istediğinizden emin misiniz?\nTüm aktif siparişler arşivlenecek.')) return;
   try {
-    const r = await fetch('/api/orders/close-day', {method: 'POST'});
+    const r = await fetch('/api/orders/close-day', {method:'POST'});
     const d = await r.json();
-    alert(`✅ Gün kapatıldı!\n${d.archived} sipariş arşivlendi.\n${d.date}`);
+    alert(`✅ Gün kapatıldı!\n${d.archived} sipariş arşivlendi.`);
     loadOrders(); loadStats();
   } catch(e) { alert('Hata oluştu'); }
 }
 
 let searchTimeout = null;
-function searchOrders(val) {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => loadOrders(val), 300);
-}
-function searchCalls(val) {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => loadAllCalls(val), 300);
-}
-function searchCustomers(val) {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(() => loadCustomers(val), 300);
-}
+function searchOrders(val) { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => loadOrders(val), 300); }
+function searchCalls(val) { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => loadAllCalls(val), 300); }
+function searchCustomers(val) { clearTimeout(searchTimeout); searchTimeout = setTimeout(() => loadCustomers(val), 300); }
 
 async function loadStats() {
   try {
@@ -342,13 +537,13 @@ function callRow(c, showSiparis=false) {
     <td class="clickable" onclick="loadDetail('${c.call_id}')">${isim}</td>
     ${showSiparis ? `<td>${sd.siparis_detayi||'—'}</td>` : ''}
     <td>${dur(c.duration_s)}</td>
-    <td>${sd.siparis_var_mi ? '<span class="badge badge-gold">📦 Sipariş</span>' : '<span class="badge badge-gray">Görüşme</span>'}</td>
-    <td>${c.recording_url ? `<button class="audio-btn" onclick="window.open('${c.recording_url}','_blank')">▶ Dinle</button>` : '—'}</td>
+    <td>${sd.siparis_var_mi ? '<span class="badge badge-gold">📦</span>' : '<span class="badge badge-gray">Görüşme</span>'}</td>
+    <td>${c.recording_url ? `<button class="audio-btn" onclick="window.open('${c.recording_url}','_blank')">▶</button>` : '—'}</td>
   </tr>`;
 }
 
 async function loadCalls() {
-  const r = await fetch('/api/calls?limit=20');
+  const r = await fetch('/api/calls?limit=3');
   const calls = await r.json();
   const el = document.getElementById('son-aramalar-container');
   if (!calls.length) { el.innerHTML = '<div class="empty">Henüz arama yok</div>'; return; }
@@ -370,13 +565,12 @@ async function loadCustomers(search='') {
   const data = await r.json();
   const el = document.getElementById('musteriler-container');
   if (!data.length) { el.innerHTML = '<div class="empty">Sonuç bulunamadı</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>Numara</th><th>İsim</th><th>Adres</th><th>Arama</th><th>İlk Arama</th><th>Son Arama</th></tr></thead><tbody>${data.map(c=>`
+  el.innerHTML = `<table><thead><tr><th>Numara</th><th>İsim</th><th>Adres</th><th>Arama</th><th>Son Arama</th></tr></thead><tbody>${data.map(c=>`
     <tr>
       <td class="phone">${c.phone_number}</td>
       <td>${[c.name,c.surname].filter(Boolean).join(' ')||'—'}</td>
       <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.address||'—'}</td>
       <td><span class="badge badge-green">${c.call_count||0}</span></td>
-      <td>${fmt(c.first_call_at)}</td>
       <td>${fmt(c.last_call_at)}</td>
     </tr>`).join('')}</tbody></table>`;
 }
@@ -389,7 +583,7 @@ async function loadOrders(search='') {
   const r = await fetch(`/api/orders?${q}`);
   const data = await r.json();
   const el = document.getElementById('siparisler-container');
-  if (!data.length) { el.innerHTML = `<div class="empty">${isArchive ? 'Arşivde sipariş yok' : 'Aktif sipariş yok'}</div>`; return; }
+  if (!data.length) { el.innerHTML = `<div class="empty">${isArchive?'Arşivde sipariş yok':'Aktif sipariş yok'}</div>`; return; }
   el.innerHTML = `<table><thead><tr><th>Tarih</th><th>Müşteri</th><th>Numara</th><th>Sipariş</th><th>Tutar</th><th>Ödeme</th><th>Durum</th><th>İşlem</th></tr></thead><tbody>${data.map(o=>`
     <tr>
       <td>${fmt(o.created_at)}</td>
@@ -398,7 +592,7 @@ async function loadOrders(search='') {
       <td><strong>${o.siparis_detayi||'—'}</strong></td>
       <td>${o.tutar||'—'}</td>
       <td>${o.odeme_yontemi||'—'}</td>
-      <td>${statusBadge(o.status, o.archived_at)}</td>
+      <td>${statusBadge(o.status,o.archived_at)}</td>
       <td>${orderButtons(o)}</td>
     </tr>`).join('')}</tbody></table>`;
 }
@@ -410,9 +604,9 @@ async function loadAnalytics(period, el) {
   const data = await r.json();
   const container = document.getElementById('analytics-container');
   if (!data.length) { container.innerHTML = '<div class="empty">Veri yok</div>'; return; }
-  container.innerHTML = `<table><thead><tr><th>Tarih</th><th>Toplam Sipariş</th><th>Kargolanan</th><th>İptal</th></tr></thead><tbody>${data.map(d=>`
+  container.innerHTML = `<table><thead><tr><th>Tarih</th><th>Toplam</th><th>Kargolanan</th><th>İptal</th></tr></thead><tbody>${data.map(d=>`
     <tr>
-      <td>${d.tarih ? new Date(d.tarih).toLocaleDateString('tr-TR') : '—'}</td>
+      <td>${d.tarih?new Date(d.tarih).toLocaleDateString('tr-TR'):'—'}</td>
       <td><strong>${d.toplam||0}</strong></td>
       <td><span class="badge badge-blue">${d.kargolanan||0}</span></td>
       <td><span class="badge badge-red">${d.iptal||0}</span></td>
@@ -433,33 +627,22 @@ async function loadDetail(callId) {
       <div class="detail-row"><label>Numara</label><span class="phone">${c.phone_number||'—'}</span></div>
       <div class="detail-row"><label>Tarih</label><span>${fmt(c.started_at)}</span></div>
       <div class="detail-row"><label>Süre</label><span>${dur(c.duration_s)}</span></div>
-      ${c.recording_url ? `<div class="detail-row"><label>Kayıt</label><button class="audio-btn" onclick="window.open('${c.recording_url}','_blank')">▶ Dinle</button></div>` : ''}
+      ${c.recording_url?`<div class="detail-row"><label>Kayıt</label><button class="audio-btn" onclick="window.open('${c.recording_url}','_blank')">▶ Dinle</button></div>`:''}
     </div>
-    ${sd.siparis_var_mi ? `
-    <div class="detail-section">
-      <h4>Sipariş Detayı</h4>
+    ${sd.siparis_var_mi?`<div class="detail-section"><h4>Sipariş</h4>
       <div class="detail-row"><label>Ürün</label><span><strong>${sd.siparis_detayi||'—'}</strong></span></div>
       <div class="detail-row"><label>Tutar</label><span>${sd.tutar||'—'}</span></div>
       <div class="detail-row"><label>Ödeme</label><span>${sd.odeme_yontemi||'—'}</span></div>
       <div class="detail-row"><label>Adres</label><span>${sd.adres||'—'}</span></div>
-    </div>` : ''}
-    ${sd.ozet ? `<div class="detail-section"><h4>Özet</h4><p style="font-size:13px;line-height:1.6">${sd.ozet}</p></div>` : ''}
-    ${c.transcripts && c.transcripts.length ? `
-    <div class="detail-section">
-      <h4>Konuşma</h4>
-      ${c.transcripts.map(t=>`
-        <div class="transcript-line ${t.role==='agent'?'transcript-agent':'transcript-user'}">
-          <div class="transcript-role">${t.role==='agent'?'🤖 Pınar':'👤 Müşteri'}</div>
-          ${t.content}
-        </div>`).join('')}
-    </div>` : ''}
+    </div>`:''}
+    ${sd.ozet?`<div class="detail-section"><h4>Özet</h4><p style="font-size:13px;line-height:1.6">${sd.ozet}</p></div>`:''}
+    ${c.transcripts&&c.transcripts.length?`<div class="detail-section"><h4>Konuşma</h4>${c.transcripts.map(t=>`<div class="transcript-line ${t.role==='agent'?'transcript-agent':'transcript-user'}"><div class="transcript-role">${t.role==='agent'?'🤖 Pınar':'👤 Müşteri'}</div>${t.content}</div>`).join('')}</div>`:''}
   `;
 }
 
-function closeDetail(e) { if (e.target === document.getElementById('detail-overlay')) closeDetailPanel(); }
+function closeDetail(e) { if (e.target===document.getElementById('detail-overlay')) closeDetailPanel(); }
 function closeDetailPanel() { document.getElementById('detail-overlay').classList.remove('open'); }
 
-// İlk yükleme
 loadStats(); loadCalls();
 setInterval(loadStats, 30000);
 </script>

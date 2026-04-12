@@ -228,3 +228,49 @@ def dashboard(_=Depends(verify)):
     with open("index.html", "r", encoding="utf-8") as f:
         return f.read()
 
+
+
+class CustomerCreate(BaseModel):
+    phone_number: str
+    name: str = ""
+    surname: str = ""
+    address: str = ""
+
+class CustomerUpdate(BaseModel):
+    name: str = ""
+    surname: str = ""
+    address: str = ""
+
+class OrderCreate(BaseModel):
+    phone_number: str
+    name: str = ""
+    surname: str = ""
+    address: str = ""
+    siparis_detayi: str
+    tutar: str = ""
+    odeme_yontemi: str = "Kapida odeme"
+    status: str = "new"
+
+@app.post("/api/customers")
+def create_customer(body: CustomerCreate, conn=Depends(get_db), _=Depends(verify)):
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cur.execute("SELECT phone_number FROM customers WHERE phone_number = %s", (body.phone_number,))
+    if cur.fetchone():
+        raise HTTPException(status_code=400, detail="Bu telefon numarasi zaten kayitli")
+    cur.execute("INSERT INTO customers (phone_number, name, surname, address) VALUES (%s, %s, %s, %s)", (body.phone_number, body.name, body.surname, body.address))
+    conn.commit()
+    return {"success": True}
+
+@app.patch("/api/customers/{phone_number}")
+def update_customer(phone_number: str, body: CustomerUpdate, conn=Depends(get_db), _=Depends(verify)):
+    cur = conn.cursor()
+    cur.execute("UPDATE customers SET name=%s, surname=%s, address=%s WHERE phone_number=%s", (body.name, body.surname, body.address, phone_number))
+    conn.commit()
+    return {"success": True}
+
+@app.post("/api/orders")
+def create_order(body: OrderCreate, conn=Depends(get_db), _=Depends(verify)):
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cur.execute("INSERT INTO orders (phone_number, name, surname, address, siparis_detayi, tutar, odeme_yontemi, status, created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,NOW()) RETURNING id", (body.phone_number, body.name, body.surname, body.address, body.siparis_detayi, body.tutar, body.odeme_yontemi, body.status))
+    conn.commit()
+    return {"success": True}
