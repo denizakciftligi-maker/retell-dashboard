@@ -160,6 +160,7 @@ tr:hover td { background: var(--olive-pale); }
     <div class="nav-item" onclick="showPage('siparisler', this)"><span class="nav-icon">📦</span><span>Siparişler</span></div>
     <div class="nav-item" onclick="showPage('aramalar', this)"><span class="nav-icon">📞</span><span>Aramalar</span></div>
     <div class="nav-item" onclick="showPage('musteriler', this)"><span class="nav-icon">👥</span><span>Müşteriler</span></div>
+    <div class="nav-item" onclick="showPage('urunler', this)"><span class="nav-icon">🫒</span><span>Ürünler</span></div>
     <div class="nav-item" onclick="showPage('analytics', this)"><span class="nav-icon">📈</span><span>Analitik</span></div>
   </nav>
   <div class="sidebar-footer"><span class="status-dot"></span>Sistem aktif</div>
@@ -253,6 +254,23 @@ tr:hover td { background: var(--olive-pale); }
       <button class="refresh-btn" onclick="loadCustomers()">↻ Yenile</button>
     </div>
     <div class="table-card"><div id="musteriler-container"><div class="loading">Yükleniyor...</div></div></div>
+  </div>
+
+
+  <!-- ÜRÜNLER -->
+  <div class="page" id="page-urunler">
+    <div class="page-header"><div class="page-header-left"><h2>Ürünler</h2><p>Ürün kataloğu</p></div></div>
+    <div class="action-bar" style="margin-bottom:20px;">
+      <button class="action-bar-btn btn-primary" onclick="openModal('urun-ekle')">➕ Ürün Ekle</button>
+      <button class="action-bar-btn btn-secondary" onclick="openModal('urun-guncelle')">✏️ Ürün Güncelle / Sil</button>
+    </div>
+    <div class="toolbar">
+      <button class="toolbar-btn active-tab" id="ut-hepsi" onclick="switchUrunTab('',this)">Tümü</button>
+      <button class="toolbar-btn" id="ut-zeytin" onclick="switchUrunTab('zeytin',this)">🫒 Zeytin</button>
+      <button class="toolbar-btn" id="ut-yagi" onclick="switchUrunTab('zeytinyagi',this)">🫙 Zeytinyağı</button>
+      <button class="refresh-btn" onclick="loadUrunler()">↻</button>
+    </div>
+    <div class="table-card"><div id="urunler-container"><div class="loading">Yükleniyor...</div></div></div>
   </div>
 
   <!-- ANALİTİK -->
@@ -418,6 +436,7 @@ function showPage(name, el) {
   if (name === 'aramalar') loadAllCalls();
   if (name === 'musteriler') loadCustomers();
   if (name === 'analytics') loadAnalytics('daily');
+  if (name === 'urunler') loadUrunler();
 }
 
 // MODAL
@@ -819,5 +838,92 @@ async function siparisKaydet() {
 }
 
 </script>
+
+<!-- ÜRÜN EKLE MODAL -->
+<div class="modal-overlay" id="modal-urun-ekle">
+  <div class="modal">
+    <h3>➕ Ürün Ekle</h3>
+    <div id="ue-kategori" class="siparis-tip-sec">
+      <button class="tip-btn" onclick="urunEkleSec('zeytin',this)">
+        <span class="tip-icon">🫒</span>
+        <span class="tip-label">Zeytin</span>
+      </button>
+      <button class="tip-btn" onclick="urunEkleSec('zeytinyagi',this)">
+        <span class="tip-icon">🫙</span>
+        <span class="tip-label">Zeytinyağı</span>
+      </button>
+    </div>
+    <div id="ue-form" style="display:none">
+      <div class="form-group"><label>Ürün Adı *</label><input class="form-input" id="ue-ad" placeholder="örn: Siyah Zeytin"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Alt Kategori</label><input class="form-input" id="ue-subcat" placeholder="örn: siyah, yesil, sizma"></div>
+        <div class="form-group"><label>Miktar</label>
+          <div style="display:flex;gap:6px;">
+            <input class="form-input" id="ue-weight" placeholder="10" style="flex:1">
+            <input class="form-input" id="ue-unit" placeholder="kg" style="width:60px">
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Kapıda Ödeme (TL)</label><input class="form-input" id="ue-cod" placeholder="0" type="number"></div>
+        <div class="form-group"><label>EFT/Havale (TL)</label><input class="form-input" id="ue-eft" placeholder="0" type="number"></div>
+      </div>
+      <div class="form-group"><label>Ürün Bilgisi</label><input class="form-input" id="ue-desc" placeholder="Az tuzlu, doğal..."></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="kapatModal('urun-ekle')">İptal</button>
+      <button class="modal-btn modal-btn-save" onclick="urunEkleKaydet()" id="btn-ue-kaydet" style="display:none">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- ÜRÜN GÜNCELLE MODAL -->
+<div class="modal-overlay" id="modal-urun-guncelle">
+  <div class="modal" style="width:560px">
+    <h3>✏️ Ürün Güncelle / Sil</h3>
+    <div id="ug-kategori" class="siparis-tip-sec">
+      <button class="tip-btn" onclick="urunGuncelleSec('zeytin',this)">
+        <span class="tip-icon">🫒</span>
+        <span class="tip-label">Zeytin</span>
+      </button>
+      <button class="tip-btn" onclick="urunGuncelleSec('zeytinyagi',this)">
+        <span class="tip-icon">🫙</span>
+        <span class="tip-label">Zeytinyağı</span>
+      </button>
+    </div>
+    <div id="ug-liste" style="display:none">
+      <div id="ug-liste-container"></div>
+    </div>
+    <div id="ug-form" style="display:none">
+      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
+      <div class="form-group"><label>Ürün Adı *</label><input class="form-input" id="ug-ad"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Alt Kategori</label><input class="form-input" id="ug-subcat"></div>
+        <div class="form-group"><label>Miktar</label>
+          <div style="display:flex;gap:6px;">
+            <input class="form-input" id="ug-weight" style="flex:1">
+            <input class="form-input" id="ug-unit" style="width:60px">
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Kapıda Ödeme (TL)</label><input class="form-input" id="ug-cod" type="number"></div>
+        <div class="form-group"><label>EFT/Havale (TL)</label><input class="form-input" id="ug-eft" type="number"></div>
+      </div>
+      <div class="form-group"><label>Ürün Bilgisi</label><input class="form-input" id="ug-desc"></div>
+      <div class="form-group">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+          <input type="checkbox" id="ug-active"> <span>Aktif</span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="ugGeriDon()" id="btn-ug-geri" style="display:none">← Geri</button>
+      <button class="modal-btn modal-btn-cancel" onclick="kapatModal('urun-guncelle')">Kapat</button>
+      <button class="modal-btn modal-btn-save" onclick="urunGuncelleKaydet()" id="btn-ug-kaydet" style="display:none">Güncelle</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

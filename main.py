@@ -285,3 +285,58 @@ def delete_customer(phone_number: str, conn=Depends(get_db), _=Depends(verify)):
     cur.execute("DELETE FROM customers WHERE phone_number = %s", (phone_number,))
     conn.commit()
     return {"success": True}
+
+
+# URUN ENDPOINTS
+class ProductCreate(BaseModel):
+    name: str
+    category: str
+    subcategory: str = ""
+    weight: float = 0
+    unit: str = "kg"
+    price_cod: float = 0
+    price_eft: float = 0
+    description: str = ""
+    active: bool = True
+
+class ProductUpdate(BaseModel):
+    name: str = ""
+    subcategory: str = ""
+    weight: float = 0
+    unit: str = "kg"
+    price_cod: float = 0
+    price_eft: float = 0
+    description: str = ""
+    active: bool = True
+
+@app.get("/api/products")
+def get_products(category: str = "", conn=Depends(get_db), _=Depends(verify)):
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    if category:
+        cur.execute("SELECT * FROM products WHERE category = %s ORDER BY subcategory, weight", (category,))
+    else:
+        cur.execute("SELECT * FROM products ORDER BY category, subcategory, weight")
+    return [dict(r) for r in cur.fetchall()]
+
+@app.post("/api/products")
+def create_product(body: ProductCreate, conn=Depends(get_db), _=Depends(verify)):
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    cur.execute("INSERT INTO products (name, category, subcategory, weight, unit, price_cod, price_eft, description, active) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id",
+        (body.name, body.category, body.subcategory, body.weight, body.unit, body.price_cod, body.price_eft, body.description, body.active))
+    conn.commit()
+    return {"success": True}
+
+@app.patch("/api/products/{product_id}")
+def update_product(product_id: str, body: ProductUpdate, conn=Depends(get_db), _=Depends(verify)):
+    cur = conn.cursor()
+    cur.execute("UPDATE products SET name=%s, subcategory=%s, weight=%s, unit=%s, price_cod=%s, price_eft=%s, description=%s, active=%s, updated_at=NOW() WHERE id=%s",
+        (body.name, body.subcategory, body.weight, body.unit, body.price_cod, body.price_eft, body.description, body.active, product_id))
+    conn.commit()
+    return {"success": True}
+
+@app.delete("/api/products/{product_id}")
+def delete_product(product_id: str, conn=Depends(get_db), _=Depends(verify)):
+    cur = conn.cursor()
+    cur.execute("DELETE FROM products WHERE id = %s", (product_id,))
+    conn.commit()
+    return {"success": True}
