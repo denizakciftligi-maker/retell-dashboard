@@ -837,6 +837,167 @@ async function siparisKaydet() {
   } catch(e) { alert('Hata'); }
 }
 
+
+// ---- URUN JS ----
+var _urunKat = '';
+var _editUrunId = null;
+var _ueKat = '';
+var _ugUrunler = [];
+
+window.urunTabSec = function(cat, btn) {
+  _urunKat = cat;
+  ['ut-hepsi','ut-zeytin','ut-yagi'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.remove('active-tab'); });
+  if (btn) btn.classList.add('active-tab');
+  window.loadUrunler();
+};
+
+window.loadUrunler = async function() {
+  var q = _urunKat ? '?category=' + _urunKat : '';
+  try {
+    var r = await fetch('/api/products' + q);
+    var data = await r.json();
+    var el = document.getElementById('urunler-container');
+    if (!data.length) { el.innerHTML = '<div class="empty">Urun yok.</div>'; return; }
+    var rows = data.map(function(p) {
+      var kat = p.category === 'zeytin' ? 'Zeytin' : 'Zeytinyagi';
+      var durum = p.active ? '<span class="badge badge-green">Aktif</span>' : '<span class="badge badge-gray">Pasif</span>';
+      return '<tr><td><strong>' + (p.name||'') + '</strong>' + (p.subcategory ? '<br><span style="font-size:11px;color:var(--muted)">' + p.subcategory + '</span>' : '') + '</td><td>' + kat + '</td><td>' + (p.weight||'') + ' ' + (p.unit||'') + '</td><td>' + (p.price_cod ? p.price_cod + ' TL' : '-') + '</td><td>' + (p.price_eft ? p.price_eft + ' TL' : '-') + '</td><td>' + (p.description||'-') + '</td><td>' + durum + '</td></tr>';
+    });
+    el.innerHTML = '<table><thead><tr><th>Urun</th><th>Kategori</th><th>Miktar</th><th>Kapida</th><th>EFT</th><th>Bilgi</th><th>Durum</th></tr></thead><tbody>' + rows.join('') + '</tbody></table>';
+  } catch(e) { document.getElementById('urunler-container').innerHTML = '<div class="empty">Hata</div>'; }
+};
+
+window.urunEkleKatSec = function(kat, btn) {
+  _ueKat = kat;
+  document.querySelectorAll('#ue-kat-sec .tip-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  document.getElementById('ue-form').style.display = 'block';
+  document.getElementById('btn-ue-kaydet').style.display = 'inline-block';
+  document.getElementById('ue-unit').value = kat === 'zeytin' ? 'kg' : 'L';
+};
+
+window.urunEkleKapat = function() {
+  document.getElementById('modal-urun-ekle').classList.remove('open');
+  _ueKat = '';
+  document.getElementById('ue-form').style.display = 'none';
+  document.getElementById('btn-ue-kaydet').style.display = 'none';
+  document.querySelectorAll('#ue-kat-sec .tip-btn').forEach(function(b){ b.classList.remove('selected'); });
+  ['ue-ad','ue-subcat','ue-weight','ue-unit','ue-cod','ue-eft','ue-desc'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+};
+
+window.urunEkleKaydet = async function() {
+  var ad = document.getElementById('ue-ad').value.trim();
+  if (!ad) { alert('Urun adi zorunlu!'); return; }
+  if (!_ueKat) { alert('Kategori secin!'); return; }
+  try {
+    var r = await fetch('/api/products', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name: ad, category: _ueKat,
+        subcategory: document.getElementById('ue-subcat').value.trim(),
+        weight: parseFloat(document.getElementById('ue-weight').value)||0,
+        unit: document.getElementById('ue-unit').value.trim()||'kg',
+        price_cod: parseFloat(document.getElementById('ue-cod').value)||0,
+        price_eft: parseFloat(document.getElementById('ue-eft').value)||0,
+        description: document.getElementById('ue-desc').value.trim() })
+    });
+    if (!r.ok) { alert('Hata'); return; }
+    alert('Urun eklendi!');
+    window.urunEkleKapat();
+    window.loadUrunler();
+  } catch(e) { alert('Hata: ' + e); }
+};
+
+window.urunGuncelleKatSec = async function(kat, btn) {
+  document.querySelectorAll('#ug-kat-sec .tip-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  document.getElementById('ug-kat-sec').style.display = 'none';
+  document.getElementById('ug-form').style.display = 'none';
+  document.getElementById('btn-ug-kaydet').style.display = 'none';
+  document.getElementById('btn-ug-geri').style.display = 'inline-block';
+  document.getElementById('ug-liste').style.display = 'block';
+  document.getElementById('ug-liste-icerik').innerHTML = '<div class="loading">Yukleniyor...</div>';
+  try {
+    var r = await fetch('/api/products?category=' + kat);
+    _ugUrunler = await r.json();
+    if (!_ugUrunler.length) { document.getElementById('ug-liste-icerik').innerHTML = '<div class="empty">Bu kategoride urun yok</div>'; return; }
+    var html = _ugUrunler.map(function(p) {
+      var pid = p.id; var pname = (p.name||'').replace(/'/g,'');
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--border);">' +
+        '<div><strong>' + (p.name||'') + '</strong> ' + (p.weight ? p.weight+' '+(p.unit||'') : '') +
+        '<br><span style="font-size:12px;color:var(--muted)">' + (p.price_cod?'Kapida: '+p.price_cod+' TL  ':'') + (p.price_eft?'EFT: '+p.price_eft+' TL':'') + '</span></div>' +
+        '<div style="display:flex;gap:6px;">' +
+        '<button class="action-btn btn-ship" onclick="window.urunDuzenleAc(\"' + pid + '\")">Duzenle</button>' +
+        '<button class="action-btn btn-cancel" onclick="window.urunSilOnay(\"' + pid + '\",\"' + pname + '\")">Sil</button>' +
+        '</div></div>';
+    });
+    document.getElementById('ug-liste-icerik').innerHTML = html.join('');
+  } catch(e) { document.getElementById('ug-liste-icerik').innerHTML = '<div class="empty">Hata</div>'; }
+};
+
+window.ugGeriDon = function() {
+  _editUrunId = null;
+  document.getElementById('ug-liste').style.display = 'none';
+  document.getElementById('ug-form').style.display = 'none';
+  document.getElementById('btn-ug-kaydet').style.display = 'none';
+  document.getElementById('btn-ug-geri').style.display = 'none';
+  document.getElementById('ug-kat-sec').style.display = 'flex';
+  document.querySelectorAll('#ug-kat-sec .tip-btn').forEach(function(b){ b.classList.remove('selected'); });
+};
+
+window.urunGuncelleKapat = function() {
+  document.getElementById('modal-urun-guncelle').classList.remove('open');
+  window.ugGeriDon();
+};
+
+window.urunDuzenleAc = function(id) {
+  var p = _ugUrunler.find(function(x){ return x.id===id; });
+  if (!p) return;
+  _editUrunId = id;
+  document.getElementById('ug-ad').value = p.name||'';
+  document.getElementById('ug-subcat').value = p.subcategory||'';
+  document.getElementById('ug-weight').value = p.weight||'';
+  document.getElementById('ug-unit').value = p.unit||'';
+  document.getElementById('ug-cod').value = p.price_cod||'';
+  document.getElementById('ug-eft').value = p.price_eft||'';
+  document.getElementById('ug-desc').value = p.description||'';
+  document.getElementById('ug-active').checked = p.active !== false;
+  document.getElementById('ug-liste').style.display = 'none';
+  document.getElementById('ug-form').style.display = 'block';
+  document.getElementById('btn-ug-kaydet').style.display = 'inline-block';
+};
+
+window.urunGuncelleKaydet = async function() {
+  if (!_editUrunId) return;
+  try {
+    var r = await fetch('/api/products/'+_editUrunId, {
+      method: 'PATCH', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ name: document.getElementById('ug-ad').value.trim(),
+        subcategory: document.getElementById('ug-subcat').value.trim(),
+        weight: parseFloat(document.getElementById('ug-weight').value)||0,
+        unit: document.getElementById('ug-unit').value.trim(),
+        price_cod: parseFloat(document.getElementById('ug-cod').value)||0,
+        price_eft: parseFloat(document.getElementById('ug-eft').value)||0,
+        description: document.getElementById('ug-desc').value.trim(),
+        active: document.getElementById('ug-active').checked })
+    });
+    if (!r.ok) { alert('Hata'); return; }
+    alert('Urun guncellendi!');
+    window.urunGuncelleKapat();
+    window.loadUrunler();
+  } catch(e) { alert('Hata: '+e); }
+};
+
+window.urunSilOnay = async function(id, ad) {
+  if (!confirm('"'+ad+'" silinsin mi?')) return;
+  try {
+    var r = await fetch('/api/products/'+id, {method:'DELETE'});
+    if (!r.ok) { alert('Hata'); return; }
+    alert('Urun silindi.');
+    window.urunGuncelleKapat();
+    window.loadUrunler();
+  } catch(e) { alert('Hata'); }
+};
+
 </script>
 
 <!-- ÜRÜN EKLE MODAL -->
