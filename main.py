@@ -274,3 +274,14 @@ def create_order(body: OrderCreate, conn=Depends(get_db), _=Depends(verify)):
     cur.execute("INSERT INTO orders (phone_number, name, surname, address, siparis_detayi, tutar, odeme_yontemi, status, created_at) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,NOW()) RETURNING id", (body.phone_number, body.name, body.surname, body.address, body.siparis_detayi, body.tutar, body.odeme_yontemi, body.status))
     conn.commit()
     return {"success": True}
+
+
+@app.delete("/api/customers/{phone_number}")
+def delete_customer(phone_number: str, conn=Depends(get_db), _=Depends(verify)):
+    cur = conn.cursor()
+    cur.execute("DELETE FROM transcripts WHERE call_id IN (SELECT call_id FROM calls WHERE phone_number = %s)", (phone_number,))
+    cur.execute("DELETE FROM orders WHERE phone_number = %s", (phone_number,))
+    cur.execute("DELETE FROM calls WHERE phone_number = %s", (phone_number,))
+    cur.execute("DELETE FROM customers WHERE phone_number = %s", (phone_number,))
+    conn.commit()
+    return {"success": True}
