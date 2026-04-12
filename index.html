@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Deniz Bey Ã‡iftliÄŸi â€” Dashboard</title>
+<title>Deniz Bey Çiftliği — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -151,17 +151,16 @@ tr:hover td { background: var(--olive-pale); }
 
 <div class="sidebar">
   <div class="logo">
-    <h1>Deniz Bey Ã‡iftliÄŸi</h1>
-    <p>SatÄ±ÅŸ Paneli</p>
+    <h1>Deniz Bey Çiftliği</h1>
+    <p>Satış Paneli</p>
     <div class="sidebar-clock" id="sidebar-clock">00:00</div>
   </div>
   <nav>
-    <div class="nav-item active" onclick="showPage('panel', this)"><span class="nav-icon">ğŸ“Š</span><span>Ana Panel</span></div>
-    <div class="nav-item" onclick="showPage('siparisler', this)"><span class="nav-icon">ğŸ“¦</span><span>SipariÅŸler</span></div>
-    <div class="nav-item" onclick="showPage('aramalar', this)"><span class="nav-icon">ğŸ“</span><span>Aramalar</span></div>
-    <div class="nav-item" onclick="showPage('musteriler', this)"><span class="nav-icon">ğŸ‘¥</span><span>MÃ¼ÅŸteriler</span></div>
-    <div class="nav-item" onclick="showPage('urunler', this)"><span class="nav-icon">ğŸ«’</span><span>ÃœrÃ¼nler</span></div>
-    <div class="nav-item" onclick="showPage('analytics', this)"><span class="nav-icon">ğŸ“ˆ</span><span>Analitik</span></div>
+    <div class="nav-item active" onclick="showPage('panel', this)"><span class="nav-icon">📊</span><span>Ana Panel</span></div>
+    <div class="nav-item" onclick="showPage('siparisler', this)"><span class="nav-icon">📦</span><span>Siparişler</span></div>
+    <div class="nav-item" onclick="showPage('aramalar', this)"><span class="nav-icon">📞</span><span>Aramalar</span></div>
+    <div class="nav-item" onclick="showPage('musteriler', this)"><span class="nav-icon">👥</span><span>Müşteriler</span></div>
+    <div class="nav-item" onclick="showPage('analytics', this)"><span class="nav-icon">📈</span><span>Analitik</span></div>
   </nav>
   <div class="sidebar-footer"><span class="status-dot"></span>Sistem aktif</div>
 </div>
@@ -179,150 +178,133 @@ tr:hover td { background: var(--olive-pale); }
     </div>
 
     <div class="global-action-bar">
-      <button class="gab-btn gab-gold" onclick="openModal('siparis-olustur')">ğŸ“¦ SipariÅŸ OluÅŸtur</button>
-      <button class="gab-btn gab-primary" onclick="openModal('musteri-ekle')">â• MÃ¼ÅŸteri Ekle</button>
-      <button class="gab-btn gab-secondary" onclick="openModal('musteri-guncelle')">âœï¸ GÃ¼ncelle</button>
-      <button class="gab-btn gab-danger" onclick="openModal('musteri-sil')">ğŸ—‘ï¸ MÃ¼ÅŸteri Sil</button>
+      <button class="gab-btn gab-gold" onclick="openModal('siparis-olustur')">📦 Sipariş Oluştur</button>
+      <button class="gab-btn gab-primary" onclick="openModal('musteri-ekle')">➕ Müşteri Ekle</button>
+      <button class="gab-btn gab-secondary" onclick="openModal('musteri-guncelle')">✏️ Güncelle</button>
+      <button class="gab-btn gab-danger" onclick="openModal('musteri-sil')">🗑️ Müşteri Sil</button>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">BugÃ¼n Arama</div><div class="stat-value" id="stat-arama">â€”</div><div class="stat-sub">toplam arama</div></div>
-      <div class="stat-card"><div class="stat-label">BugÃ¼n SipariÅŸ</div><div class="stat-value" id="stat-siparis">â€”</div><div class="stat-sub">yeni sipariÅŸ</div></div>
-      <div class="stat-card"><div class="stat-label">Bekleyen</div><div class="stat-value" id="stat-bekleyen">â€”</div><div class="stat-sub">onay bekliyor</div></div>
-      <div class="stat-card"><div class="stat-label">Kargoda</div><div class="stat-value" id="stat-kargo">â€”</div><div class="stat-sub">yolda</div></div>
+      <div class="stat-card"><div class="stat-label">Bugün Arama</div><div class="stat-value" id="stat-arama">—</div><div class="stat-sub">toplam arama</div></div>
+      <div class="stat-card"><div class="stat-label">Bugün Sipariş</div><div class="stat-value" id="stat-siparis">—</div><div class="stat-sub">yeni sipariş</div></div>
+      <div class="stat-card"><div class="stat-label">Bekleyen</div><div class="stat-value" id="stat-bekleyen">—</div><div class="stat-sub">onay bekliyor</div></div>
+      <div class="stat-card"><div class="stat-label">Kargoda</div><div class="stat-value" id="stat-kargo">—</div><div class="stat-sub">yolda</div></div>
     </div>
 
     <div class="table-card">
-      <div class="table-header"><h3>Son Aramalar</h3><button class="refresh-btn" onclick="loadCalls()">â†» Yenile</button></div>
-      <div id="son-aramalar-container"><div class="loading">YÃ¼kleniyor...</div></div>
+      <div class="table-header"><h3>Son Aramalar</h3><button class="refresh-btn" onclick="loadCalls()">↻ Yenile</button></div>
+      <div id="son-aramalar-container"><div class="loading">Yükleniyor...</div></div>
     </div>
   </div>
 
-  <!-- SÄ°PARÄ°ÅLER -->
+  <!-- SİPARİŞLER -->
   <div class="page" id="page-siparisler">
     <div class="page-header">
-      <div class="page-header-left"><h2>SipariÅŸler</h2><p>Aktif sipariÅŸ yÃ¶netimi</p></div>
+      <div class="page-header-left"><h2>Siparişler</h2><p>Aktif sipariş yönetimi</p></div>
       <div class="header-clock" id="siparis-clock">00:00</div>
     </div>
     <div class="global-action-bar">
-      <button class="gab-btn gab-gold" onclick="openModal('siparis-olustur')">ğŸ“¦ SipariÅŸ OluÅŸtur</button>
-      <button class="gab-btn gab-primary" onclick="openModal('musteri-ekle')">â• MÃ¼ÅŸteri Ekle</button>
-      <button class="gab-btn gab-secondary" onclick="openModal('musteri-guncelle')">âœï¸ GÃ¼ncelle</button>
-      <button class="gab-btn gab-danger" onclick="openModal('musteri-sil')">ğŸ—‘ï¸ MÃ¼ÅŸteri Sil</button>
+      <button class="gab-btn gab-gold" onclick="openModal('siparis-olustur')">📦 Sipariş Oluştur</button>
+      <button class="gab-btn gab-primary" onclick="openModal('musteri-ekle')">➕ Müşteri Ekle</button>
+      <button class="gab-btn gab-secondary" onclick="openModal('musteri-guncelle')">✏️ Güncelle</button>
+      <button class="gab-btn gab-danger" onclick="openModal('musteri-sil')">🗑️ Müşteri Sil</button>
     </div>
     <div class="close-day-banner">
-      <p>ğŸ”’ GÃ¼nÃ¼ kapatmak tÃ¼m aktif sipariÅŸleri arÅŸivler.</p>
-      <button class="close-day-btn" onclick="closeDay()">ğŸ”’ GÃ¼nÃ¼ Kapat</button>
+      <p>🔒 Günü kapatmak tüm aktif siparişleri arşivler.</p>
+      <button class="close-day-btn" onclick="closeDay()">🔒 Günü Kapat</button>
     </div>
     <div class="toolbar">
-      <input type="text" class="search-input" id="siparis-search" placeholder="ğŸ” Ä°sim, numara, adres, Ã¼rÃ¼n veya tarih ara..." oninput="searchOrders(this.value)">
-      <button class="toolbar-btn active-tab" id="tab-aktif" onclick="switchOrderTab('aktif')">ğŸ“¦ Aktif</button>
-      <button class="toolbar-btn" id="tab-arsiv" onclick="switchOrderTab('arsiv')">ğŸ—ƒï¸ ArÅŸiv</button>
-      <button class="refresh-btn" onclick="loadOrders()">â†»</button>
+      <input type="text" class="search-input" id="siparis-search" placeholder="🔍 İsim, numara, adres, ürün veya tarih ara..." oninput="searchOrders(this.value)">
+      <button class="toolbar-btn active-tab" id="tab-aktif" onclick="switchOrderTab('aktif')">📦 Aktif</button>
+      <button class="toolbar-btn" id="tab-arsiv" onclick="switchOrderTab('arsiv')">🗃️ Arşiv</button>
+      <button class="refresh-btn" onclick="loadOrders()">↻</button>
     </div>
     <div class="table-card">
-      <div id="siparisler-container"><div class="loading">YÃ¼kleniyor...</div></div>
+      <div id="siparisler-container"><div class="loading">Yükleniyor...</div></div>
     </div>
   </div>
 
   <!-- ARAMALAR -->
   <div class="page" id="page-aramalar">
-    <div class="page-header"><div class="page-header-left"><h2>Aramalar</h2><p>TÃ¼m arama kayÄ±tlarÄ±</p></div></div>
+    <div class="page-header"><div class="page-header-left"><h2>Aramalar</h2><p>Tüm arama kayıtları</p></div></div>
     <div class="toolbar">
     <div class="global-action-bar">
-      <button class="gab-btn gab-gold" onclick="openModal('siparis-olustur')">ğŸ“¦ SipariÅŸ OluÅŸtur</button>
-      <button class="gab-btn gab-primary" onclick="openModal('musteri-ekle')">â• MÃ¼ÅŸteri Ekle</button>
-      <button class="gab-btn gab-secondary" onclick="openModal('musteri-guncelle')">âœï¸ GÃ¼ncelle</button>
-      <button class="gab-btn gab-danger" onclick="openModal('musteri-sil')">ğŸ—‘ï¸ MÃ¼ÅŸteri Sil</button>
+      <button class="gab-btn gab-gold" onclick="openModal('siparis-olustur')">📦 Sipariş Oluştur</button>
+      <button class="gab-btn gab-primary" onclick="openModal('musteri-ekle')">➕ Müşteri Ekle</button>
+      <button class="gab-btn gab-secondary" onclick="openModal('musteri-guncelle')">✏️ Güncelle</button>
+      <button class="gab-btn gab-danger" onclick="openModal('musteri-sil')">🗑️ Müşteri Sil</button>
     </div>
-      <input type="text" class="search-input" id="arama-search" placeholder="ğŸ” Ä°sim veya numara ara..." oninput="searchCalls(this.value)">
-      <button class="refresh-btn" onclick="loadAllCalls()">â†» Yenile</button>
+      <input type="text" class="search-input" id="arama-search" placeholder="🔍 İsim veya numara ara..." oninput="searchCalls(this.value)">
+      <button class="refresh-btn" onclick="loadAllCalls()">↻ Yenile</button>
     </div>
-    <div class="table-card"><div id="aramalar-container"><div class="loading">YÃ¼kleniyor...</div></div></div>
+    <div class="table-card"><div id="aramalar-container"><div class="loading">Yükleniyor...</div></div></div>
   </div>
 
-  <!-- MÃœÅTERÄ°LER -->
+  <!-- MÜŞTERİLER -->
   <div class="page" id="page-musteriler">
-    <div class="page-header"><div class="page-header-left"><h2>MÃ¼ÅŸteriler</h2><p>KayÄ±tlÄ± mÃ¼ÅŸteri listesi</p></div></div>
+    <div class="page-header"><div class="page-header-left"><h2>Müşteriler</h2><p>Kayıtlı müşteri listesi</p></div></div>
     <div class="toolbar">
     <div class="global-action-bar">
-      <button class="gab-btn gab-gold" onclick="openModal('siparis-olustur')">ğŸ“¦ SipariÅŸ OluÅŸtur</button>
-      <button class="gab-btn gab-primary" onclick="openModal('musteri-ekle')">â• MÃ¼ÅŸteri Ekle</button>
-      <button class="gab-btn gab-secondary" onclick="openModal('musteri-guncelle')">âœï¸ GÃ¼ncelle</button>
-      <button class="gab-btn gab-danger" onclick="openModal('musteri-sil')">ğŸ—‘ï¸ MÃ¼ÅŸteri Sil</button>
+      <button class="gab-btn gab-gold" onclick="openModal('siparis-olustur')">📦 Sipariş Oluştur</button>
+      <button class="gab-btn gab-primary" onclick="openModal('musteri-ekle')">➕ Müşteri Ekle</button>
+      <button class="gab-btn gab-secondary" onclick="openModal('musteri-guncelle')">✏️ Güncelle</button>
+      <button class="gab-btn gab-danger" onclick="openModal('musteri-sil')">🗑️ Müşteri Sil</button>
     </div>
-      <input type="text" class="search-input" id="musteri-search" placeholder="ğŸ” Ä°sim, numara veya adres ara..." oninput="searchCustomers(this.value)">
-      <button class="refresh-btn" onclick="loadCustomers()">â†» Yenile</button>
+      <input type="text" class="search-input" id="musteri-search" placeholder="🔍 İsim, numara veya adres ara..." oninput="searchCustomers(this.value)">
+      <button class="refresh-btn" onclick="loadCustomers()">↻ Yenile</button>
     </div>
-    <div class="table-card"><div id="musteriler-container"><div class="loading">YÃ¼kleniyor...</div></div></div>
+    <div class="table-card"><div id="musteriler-container"><div class="loading">Yükleniyor...</div></div></div>
   </div>
 
-
-  <!-- ÃœRÃœNLER -->
-  <div class="page" id="page-urunler">
-    <div class="page-header"><div class="page-header-left"><h2>ÃœrÃ¼nler</h2><p>ÃœrÃ¼n kataloÄŸu</p></div></div>
-    <div class="action-bar" style="margin-bottom:20px;">
-      <button class="action-bar-btn btn-primary" onclick="openModal('urun-ekle')">â• ÃœrÃ¼n Ekle</button>
-      <button class="action-bar-btn btn-secondary" onclick="openModal('urun-guncelle')">âœï¸ ÃœrÃ¼n GÃ¼ncelle / Sil</button>
-    </div>
-    <div class="toolbar">
-      <button class="toolbar-btn active-tab" id="ut-hepsi" onclick="switchUrunTab('',this)">TÃ¼mÃ¼</button>
-      <button class="toolbar-btn" id="ut-zeytin" onclick="switchUrunTab('zeytin',this)">ğŸ«’ Zeytin</button>
-      <button class="toolbar-btn" id="ut-yagi" onclick="switchUrunTab('zeytinyagi',this)">ğŸ«™ ZeytinyaÄŸÄ±</button>
-      <button class="refresh-btn" onclick="loadUrunler()">â†»</button>
-    </div>
-    <div class="table-card"><div id="urunler-container"><div class="loading">YÃ¼kleniyor...</div></div></div>
-  </div>
-
-  <!-- ANALÄ°TÄ°K -->
+  <!-- ANALİTİK -->
   <div class="page" id="page-analytics">
-    <div class="page-header"><div class="page-header-left"><h2>Analitik</h2><p>SipariÅŸ istatistikleri</p></div></div>
+    <div class="page-header"><div class="page-header-left"><h2>Analitik</h2><p>Sipariş istatistikleri</p></div></div>
     <div class="global-action-bar">
-      <button class="gab-btn gab-gold" onclick="openModal('siparis-olustur')">ğŸ“¦ SipariÅŸ OluÅŸtur</button>
-      <button class="gab-btn gab-primary" onclick="openModal('musteri-ekle')">â• MÃ¼ÅŸteri Ekle</button>
-      <button class="gab-btn gab-secondary" onclick="openModal('musteri-guncelle')">âœï¸ GÃ¼ncelle</button>
-      <button class="gab-btn gab-danger" onclick="openModal('musteri-sil')">ğŸ—‘ï¸ MÃ¼ÅŸteri Sil</button>
+      <button class="gab-btn gab-gold" onclick="openModal('siparis-olustur')">📦 Sipariş Oluştur</button>
+      <button class="gab-btn gab-primary" onclick="openModal('musteri-ekle')">➕ Müşteri Ekle</button>
+      <button class="gab-btn gab-secondary" onclick="openModal('musteri-guncelle')">✏️ Güncelle</button>
+      <button class="gab-btn gab-danger" onclick="openModal('musteri-sil')">🗑️ Müşteri Sil</button>
     </div>
     <div class="analytics-tabs">
-      <button class="analytics-tab active" onclick="loadAnalytics('daily', this)">GÃ¼nlÃ¼k</button>
-      <button class="analytics-tab" onclick="loadAnalytics('weekly', this)">HaftalÄ±k</button>
-      <button class="analytics-tab" onclick="loadAnalytics('monthly', this)">AylÄ±k</button>
+      <button class="analytics-tab active" onclick="loadAnalytics('daily', this)">Günlük</button>
+      <button class="analytics-tab" onclick="loadAnalytics('weekly', this)">Haftalık</button>
+      <button class="analytics-tab" onclick="loadAnalytics('monthly', this)">Aylık</button>
     </div>
-    <div class="table-card"><div id="analytics-container"><div class="loading">YÃ¼kleniyor...</div></div></div>
+    <div class="table-card"><div id="analytics-container"><div class="loading">Yükleniyor...</div></div></div>
   </div>
 </div>
 
 <!-- DETAIL PANEL -->
 <div class="detail-overlay" id="detail-overlay" onclick="closeDetail(event)">
   <div class="detail-panel">
-    <button class="detail-close" onclick="closeDetailPanel()">âœ•</button>
+    <button class="detail-close" onclick="closeDetailPanel()">✕</button>
     <div id="detail-content"></div>
   </div>
 </div>
 
-<!-- MÃœÅTERÄ° EKLE MODAL -->
+<!-- MÜŞTERİ EKLE MODAL -->
 <div class="modal-overlay" id="modal-musteri-ekle">
   <div class="modal">
-    <h3>â• Yeni MÃ¼ÅŸteri Ekle</h3>
+    <h3>➕ Yeni Müşteri Ekle</h3>
     <div class="form-row">
       <div class="form-group"><label>Ad</label><input class="form-input" id="yeni-ad" placeholder="Deniz"></div>
       <div class="form-group"><label>Soyad</label><input class="form-input" id="yeni-soyad" placeholder="Ak"></div>
     </div>
-    <div class="form-group"><label>Telefon NumarasÄ± *</label><input class="form-input" id="yeni-tel" placeholder="+905010851988"></div>
-    <div class="form-group"><label>Adres</label><input class="form-input" id="yeni-adres" placeholder="Mahalle, Sokak, No, Åehir"></div>
+    <div class="form-group"><label>Telefon Numarası *</label><input class="form-input" id="yeni-tel" placeholder="+905010851988"></div>
+    <div class="form-group"><label>Adres</label><input class="form-input" id="yeni-adres" placeholder="Mahalle, Sokak, No, Şehir"></div>
     <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="closeModal('musteri-ekle')">Ä°ptal</button>
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal('musteri-ekle')">İptal</button>
       <button class="modal-btn modal-btn-save" onclick="musteriEkle()">Kaydet</button>
     </div>
   </div>
 </div>
 
-<!-- MÃœÅTERÄ° GÃœNCELLE MODAL -->
+<!-- MÜŞTERİ GÜNCELLE MODAL -->
 <div class="modal-overlay" id="modal-musteri-guncelle">
   <div class="modal">
-    <h3>âœï¸ MÃ¼ÅŸteri GÃ¼ncelle</h3>
+    <h3>✏️ Müşteri Güncelle</h3>
     <div class="form-group">
-      <label>MÃ¼ÅŸteri Ara (isim veya numara)</label>
-      <input class="form-input" id="guncelle-ara" placeholder="Ä°sim veya numara yaz..." oninput="musteriAra(this.value)">
+      <label>Müşteri Ara (isim veya numara)</label>
+      <input class="form-input" id="guncelle-ara" placeholder="İsim veya numara yaz..." oninput="musteriAra(this.value)">
       <div class="search-results" id="guncelle-sonuclar"></div>
     </div>
     <div id="guncelle-form" style="display:none">
@@ -334,31 +316,31 @@ tr:hover td { background: var(--olive-pale); }
       <div class="form-group"><label>Adres</label><input class="form-input" id="guncelle-adres"></div>
     </div>
     <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="closeModal('musteri-guncelle')">Ä°ptal</button>
-      <button class="modal-btn modal-btn-save" onclick="musteriGuncelle()" id="btn-guncelle-kaydet" style="display:none">GÃ¼ncelle</button>
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal('musteri-guncelle')">İptal</button>
+      <button class="modal-btn modal-btn-save" onclick="musteriGuncelle()" id="btn-guncelle-kaydet" style="display:none">Güncelle</button>
     </div>
   </div>
 </div>
 
-<!-- SÄ°PARÄ°Å OLUÅTUR MODAL -->
+<!-- SİPARİŞ OLUŞTUR MODAL -->
 <div class="modal-overlay" id="modal-siparis-olustur">
   <div class="modal">
-    <h3>ğŸ“¦ SipariÅŸ OluÅŸtur</h3>
+    <h3>📦 Sipariş Oluştur</h3>
     <div id="siparis-tip-sec" class="siparis-tip-sec">
       <button class="tip-btn" onclick="tipSec('mevcut',this)">
-        <span class="tip-icon">ğŸ‘¤</span>
-        <span class="tip-label">Mevcut MÃ¼ÅŸteri</span>
-        <span class="tip-desc">KayÄ±tlÄ± mÃ¼ÅŸteri seÃ§</span>
+        <span class="tip-icon">👤</span>
+        <span class="tip-label">Mevcut Müşteri</span>
+        <span class="tip-desc">Kayıtlı müşteri seç</span>
       </button>
       <button class="tip-btn" onclick="tipSec('yeni',this)">
-        <span class="tip-icon">â•</span>
-        <span class="tip-label">Yeni MÃ¼ÅŸteri</span>
-        <span class="tip-desc">Hem kayÄ±t hem sipariÅŸ</span>
+        <span class="tip-icon">➕</span>
+        <span class="tip-label">Yeni Müşteri</span>
+        <span class="tip-desc">Hem kayıt hem sipariş</span>
       </button>
     </div>
     <div id="s-mevcut" style="display:none">
-      <div class="form-group"><label>MÃ¼ÅŸteri Ara</label>
-        <input class="form-input" id="siparis-musteri-ara" placeholder="Ä°sim veya numara..." oninput="siparisMusteriAra(this.value)">
+      <div class="form-group"><label>Müşteri Ara</label>
+        <input class="form-input" id="siparis-musteri-ara" placeholder="İsim veya numara..." oninput="siparisMusteriAra(this.value)">
         <div class="search-results" id="siparis-musteri-sonuclar"></div>
       </div>
     </div>
@@ -376,37 +358,37 @@ tr:hover td { background: var(--olive-pale); }
         <div class="form-group"><label>Soyad</label><input class="form-input" id="siparis-soyad"></div>
       </div>
       <div class="form-group"><label>Telefon</label><input class="form-input" id="siparis-tel"></div>
-      <div class="form-group"><label>SipariÅŸ DetayÄ± *</label><input class="form-input" id="siparis-detay" placeholder="10 kg Siyah Zeytin"></div>
+      <div class="form-group"><label>Sipariş Detayı *</label><input class="form-input" id="siparis-detay" placeholder="10 kg Siyah Zeytin"></div>
       <div class="form-row">
         <div class="form-group"><label>Tutar</label><input class="form-input" id="siparis-tutar" placeholder="500 TL"></div>
-        <div class="form-group"><label>Ã–deme</label>
+        <div class="form-group"><label>Ödeme</label>
           <select class="form-input" id="siparis-odeme">
-            <option>KapÄ±da Ã¶deme</option><option>Online Ã¶deme</option><option>Havale</option>
+            <option>Kapıda ödeme</option><option>Online ödeme</option><option>Havale</option>
           </select>
         </div>
       </div>
       <div class="form-group"><label>Adres</label><input class="form-input" id="siparis-adres"></div>
     </div>
     <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="kapatModal('siparis-olustur')">Ä°ptal</button>
-      <button class="modal-btn modal-btn-save" onclick="siparisKaydet()" id="btn-siparis-kaydet" style="display:none">OluÅŸtur</button>
+      <button class="modal-btn modal-btn-cancel" onclick="kapatModal('siparis-olustur')">İptal</button>
+      <button class="modal-btn modal-btn-save" onclick="siparisKaydet()" id="btn-siparis-kaydet" style="display:none">Oluştur</button>
     </div>
   </div>
 </div>
 
-<!-- MÃœÅTERÄ° SÄ°L MODAL -->
+<!-- MÜŞTERİ SİL MODAL -->
 <div class="modal-overlay" id="modal-musteri-sil">
   <div class="modal">
-    <h3>ğŸ—‘ï¸ MÃ¼ÅŸteri Sil</h3>
-    <p style="font-size:13px;color:var(--red);background:#ffebee;padding:10px;border-radius:8px;margin-bottom:16px;">âš ï¸ Geri alÄ±namaz! MÃ¼ÅŸteriye ait tÃ¼m aramalar ve sipariÅŸler silinecek.</p>
-    <div class="form-group"><label>MÃ¼ÅŸteri Ara</label>
-      <input class="form-input" id="sil-ara" placeholder="Ä°sim veya numara..." oninput="silAra(this.value)">
+    <h3>🗑️ Müşteri Sil</h3>
+    <p style="font-size:13px;color:var(--red);background:#ffebee;padding:10px;border-radius:8px;margin-bottom:16px;">⚠️ Geri alınamaz! Müşteriye ait tüm aramalar ve siparişler silinecek.</p>
+    <div class="form-group"><label>Müşteri Ara</label>
+      <input class="form-input" id="sil-ara" placeholder="İsim veya numara..." oninput="silAra(this.value)">
       <div class="search-results" id="sil-sonuclar"></div>
     </div>
     <div id="sil-bilgi" style="display:none;background:var(--olive-pale);padding:10px;border-radius:8px;margin-bottom:8px;font-size:13px;"></div>
     <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="kapatModal('musteri-sil')">Ä°ptal</button>
-      <button class="modal-btn modal-btn-danger" onclick="silOnayla()" id="btn-sil" style="display:none">KalÄ±cÄ± Sil</button>
+      <button class="modal-btn modal-btn-cancel" onclick="kapatModal('musteri-sil')">İptal</button>
+      <button class="modal-btn modal-btn-danger" onclick="silOnayla()" id="btn-sil" style="display:none">Kalıcı Sil</button>
     </div>
   </div>
 </div>
@@ -418,8 +400,8 @@ function updateClocks() {
 }
 updateClocks(); setInterval(updateClocks, 1000);
 
-const fmt = (d) => d ? new Date(d).toLocaleString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : 'â€”';
-const dur = (s) => s ? Math.floor(s/60)+'dk '+String(s%60).padStart(2,'0')+'sn' : 'â€”';
+const fmt = (d) => d ? new Date(d).toLocaleString('tr-TR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—';
+const dur = (s) => s ? Math.floor(s/60)+'dk '+String(s%60).padStart(2,'0')+'sn' : '—';
 document.getElementById('bugun-tarih').textContent = new Date().toLocaleDateString('tr-TR', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
 let orderTab = 'aktif';
@@ -436,7 +418,6 @@ function showPage(name, el) {
   if (name === 'aramalar') loadAllCalls();
   if (name === 'musteriler') loadCustomers();
   if (name === 'analytics') loadAnalytics('daily');
-  if (name === 'urunler') { if(typeof loadUrunler === 'function') loadUrunler(); }
 }
 
 // MODAL
@@ -449,10 +430,10 @@ function closeModal(name) {
   if (name === 'siparis-olustur') { selectedCustomerForOrder = null; document.getElementById('siparis-form').style.display='none'; document.getElementById('btn-siparis-kaydet').style.display='none'; document.getElementById('siparis-musteri-ara').value=''; document.getElementById('siparis-musteri-sonuclar').style.display='none'; }
 }
 
-// MÃœÅTERÄ° EKLE
+// MÜŞTERİ EKLE
 async function musteriEkle() {
   const tel = document.getElementById('yeni-tel').value.trim();
-  if (!tel) { alert('Telefon numarasÄ± zorunlu!'); return; }
+  if (!tel) { alert('Telefon numarası zorunlu!'); return; }
   try {
     const r = await fetch('/api/customers', {
       method: 'POST', headers: {'Content-Type':'application/json'},
@@ -460,13 +441,13 @@ async function musteriEkle() {
     });
     const d = await r.json();
     if (!r.ok) { alert('Hata: ' + (d.detail || 'Bilinmeyen hata')); return; }
-    alert('âœ… MÃ¼ÅŸteri eklendi!');
+    alert('✅ Müşteri eklendi!');
     closeModal('musteri-ekle');
     ['yeni-ad','yeni-soyad','yeni-tel','yeni-adres'].forEach(id => document.getElementById(id).value = '');
-  } catch(e) { alert('BaÄŸlantÄ± hatasÄ±'); }
+  } catch(e) { alert('Bağlantı hatası'); }
 }
 
-// MÃœÅTERÄ° ARA (gÃ¼ncelle iÃ§in)
+// MÜŞTERİ ARA (güncelle için)
 let araTimeout = null;
 async function musteriAra(val) {
   clearTimeout(araTimeout);
@@ -476,7 +457,7 @@ async function musteriAra(val) {
     const data = await r.json();
     const el = document.getElementById('guncelle-sonuclar');
     if (!data.length) { el.style.display='none'; return; }
-    el.innerHTML = data.slice(0,5).map(c => `<div class="search-result-item" onclick="musteriSec(${JSON.stringify(c).replace(/"/g,'&quot;')})"><strong>${[c.name,c.surname].filter(Boolean).join(' ')||'â€”'}</strong><span>${c.phone_number} ${c.address?'Â· '+c.address.substring(0,30):''}...</span></div>`).join('');
+    el.innerHTML = data.slice(0,5).map(c => `<div class="search-result-item" onclick="musteriSec(${JSON.stringify(c).replace(/"/g,'&quot;')})"><strong>${[c.name,c.surname].filter(Boolean).join(' ')||'—'}</strong><span>${c.phone_number} ${c.address?'· '+c.address.substring(0,30):''}...</span></div>`).join('');
     el.style.display = 'block';
   }, 300);
 }
@@ -501,13 +482,13 @@ async function musteriGuncelle() {
       body: JSON.stringify({ name: document.getElementById('guncelle-ad').value.trim(), surname: document.getElementById('guncelle-soyad').value.trim(), address: document.getElementById('guncelle-adres').value.trim() })
     });
     if (!r.ok) { const d = await r.json(); alert('Hata: ' + (d.detail||'Bilinmeyen')); return; }
-    alert('âœ… MÃ¼ÅŸteri gÃ¼ncellendi!');
+    alert('✅ Müşteri güncellendi!');
     closeModal('musteri-guncelle');
     loadCustomers();
-  } catch(e) { alert('BaÄŸlantÄ± hatasÄ±'); }
+  } catch(e) { alert('Bağlantı hatası'); }
 }
 
-// SÄ°PARÄ°Å OLUÅTUR - mÃ¼ÅŸteri arama
+// SİPARİŞ OLUŞTUR - müşteri arama
 async function siparisMusteriAra(val) {
   clearTimeout(araTimeout);
   if (!val || val.length < 2) { document.getElementById('siparis-musteri-sonuclar').style.display='none'; return; }
@@ -516,7 +497,7 @@ async function siparisMusteriAra(val) {
     const data = await r.json();
     const el = document.getElementById('siparis-musteri-sonuclar');
     if (!data.length) { el.style.display='none'; return; }
-    el.innerHTML = data.slice(0,5).map(c => `<div class="search-result-item" onclick="siparisMusteriSec(${JSON.stringify(c).replace(/"/g,'&quot;')})"><strong>${[c.name,c.surname].filter(Boolean).join(' ')||'â€”'}</strong><span>${c.phone_number}</span></div>`).join('');
+    el.innerHTML = data.slice(0,5).map(c => `<div class="search-result-item" onclick="siparisMusteriSec(${JSON.stringify(c).replace(/"/g,'&quot;')})"><strong>${[c.name,c.surname].filter(Boolean).join(' ')||'—'}</strong><span>${c.phone_number}</span></div>`).join('');
     el.style.display = 'block';
   }, 300);
 }
@@ -536,8 +517,8 @@ function siparisMusteriSec(c) {
 async function siparisOlustur() {
   const detay = document.getElementById('siparis-detay').value.trim();
   const tel = document.getElementById('siparis-tel').value.trim();
-  if (!detay) { alert('SipariÅŸ detayÄ± zorunlu!'); return; }
-  if (!tel) { alert('MÃ¼ÅŸteri seÃ§in!'); return; }
+  if (!detay) { alert('Sipariş detayı zorunlu!'); return; }
+  if (!tel) { alert('Müşteri seçin!'); return; }
   try {
     const r = await fetch('/api/orders', {
       method: 'POST', headers: {'Content-Type':'application/json'},
@@ -553,11 +534,11 @@ async function siparisOlustur() {
       })
     });
     if (!r.ok) { const d = await r.json(); alert('Hata: ' + (d.detail||'Bilinmeyen')); return; }
-    alert('âœ… SipariÅŸ oluÅŸturuldu!');
+    alert('✅ Sipariş oluşturuldu!');
     closeModal('siparis-olustur');
     document.getElementById('siparis-detay').value=''; document.getElementById('siparis-tutar').value='';
     loadStats(); loadOrders();
-  } catch(e) { alert('BaÄŸlantÄ± hatasÄ±'); }
+  } catch(e) { alert('Bağlantı hatası'); }
 }
 
 function switchOrderTab(tab) {
@@ -568,40 +549,40 @@ function switchOrderTab(tab) {
 }
 
 function statusBadge(s, archived) {
-  if (archived) return '<span class="badge badge-archived">ğŸ—ƒï¸ ArÅŸiv</span>';
-  const map = { new:'<span class="badge badge-gold">ğŸ†• Yeni</span>', cancelled:'<span class="badge badge-red">âŒ Ä°ptal</span>', postponed:'<span class="badge badge-orange">â­ Ertelendi</span>', shipped:'<span class="badge badge-blue">ğŸ“¦ Kargoda</span>' };
+  if (archived) return '<span class="badge badge-archived">🗃️ Arşiv</span>';
+  const map = { new:'<span class="badge badge-gold">🆕 Yeni</span>', cancelled:'<span class="badge badge-red">❌ İptal</span>', postponed:'<span class="badge badge-orange">⏭ Ertelendi</span>', shipped:'<span class="badge badge-blue">📦 Kargoda</span>' };
   return map[s] || s;
 }
 
 function orderButtons(order) {
-  if (order.archived_at) return '<span style="font-size:11px;color:var(--muted)">ArÅŸivde</span>';
+  if (order.archived_at) return '<span style="font-size:11px;color:var(--muted)">Arşivde</span>';
   const s = order.status;
-  if (s === 'cancelled') return '<span style="font-size:11px;color:var(--muted)">Ä°ptal</span>';
+  if (s === 'cancelled') return '<span style="font-size:11px;color:var(--muted)">İptal</span>';
   if (s === 'shipped') return '<span style="font-size:11px;color:var(--blue)">Kargoda</span>';
-  let btns = `<button class="action-btn btn-cancel" onclick="updateOrderStatus('${order.id}','cancelled')">âŒ</button>`;
-  if (s === 'new') btns += `<button class="action-btn btn-postpone" onclick="updateOrderStatus('${order.id}','postponed')">â­</button>`;
-  btns += `<button class="action-btn btn-ship" onclick="updateOrderStatus('${order.id}','shipped')">ğŸ“¦</button>`;
+  let btns = `<button class="action-btn btn-cancel" onclick="updateOrderStatus('${order.id}','cancelled')">❌</button>`;
+  if (s === 'new') btns += `<button class="action-btn btn-postpone" onclick="updateOrderStatus('${order.id}','postponed')">⏭</button>`;
+  btns += `<button class="action-btn btn-ship" onclick="updateOrderStatus('${order.id}','shipped')">📦</button>`;
   return `<div class="action-btns">${btns}</div>`;
 }
 
 async function updateOrderStatus(orderId, newStatus) {
-  const labels = {cancelled:'Ä°ptal', postponed:'Ertele', shipped:'Kargoya ver'};
-  if (!confirm(`"${labels[newStatus]}" olarak gÃ¼ncellensin mi?`)) return;
+  const labels = {cancelled:'İptal', postponed:'Ertele', shipped:'Kargoya ver'};
+  if (!confirm(`"${labels[newStatus]}" olarak güncellensin mi?`)) return;
   try {
     const r = await fetch(`/api/orders/${orderId}/status`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:newStatus}) });
     if (!r.ok) { const err = await r.json(); alert('Hata: '+(err.detail||'Bilinmeyen')); return; }
     loadOrders(); loadStats();
-  } catch(e) { alert('BaÄŸlantÄ± hatasÄ±'); }
+  } catch(e) { alert('Bağlantı hatası'); }
 }
 
 async function closeDay() {
-  if (!confirm('GÃ¼nÃ¼ kapatmak istediÄŸinizden emin misiniz?\nTÃ¼m aktif sipariÅŸler arÅŸivlenecek.')) return;
+  if (!confirm('Günü kapatmak istediğinizden emin misiniz?\nTüm aktif siparişler arşivlenecek.')) return;
   try {
     const r = await fetch('/api/orders/close-day', {method:'POST'});
     const d = await r.json();
-    alert(`âœ… GÃ¼n kapatÄ±ldÄ±!\n${d.archived} sipariÅŸ arÅŸivlendi.`);
+    alert(`✅ Gün kapatıldı!\n${d.archived} sipariş arşivlendi.`);
     loadOrders(); loadStats();
-  } catch(e) { alert('Hata oluÅŸtu'); }
+  } catch(e) { alert('Hata oluştu'); }
 }
 
 let searchTimeout = null;
@@ -622,15 +603,15 @@ async function loadStats() {
 
 function callRow(c, showSiparis=false) {
   const sd = c.summary_data || {};
-  const isim = [c.name, c.surname].filter(Boolean).join(' ') || 'â€”';
+  const isim = [c.name, c.surname].filter(Boolean).join(' ') || '—';
   return `<tr>
     <td>${fmt(c.started_at)}</td>
-    <td class="phone">${c.phone_number||'â€”'}</td>
+    <td class="phone">${c.phone_number||'—'}</td>
     <td class="clickable" onclick="loadDetail('${c.call_id}')">${isim}</td>
-    ${showSiparis ? `<td>${sd.siparis_detayi||'â€”'}</td>` : ''}
+    ${showSiparis ? `<td>${sd.siparis_detayi||'—'}</td>` : ''}
     <td>${dur(c.duration_s)}</td>
-    <td>${sd.siparis_var_mi ? '<span class="badge badge-gold">ğŸ“¦</span>' : '<span class="badge badge-gray">GÃ¶rÃ¼ÅŸme</span>'}</td>
-    <td>${c.recording_url ? `<button class="audio-btn" onclick="window.open('${c.recording_url}','_blank')">â–¶</button>` : 'â€”'}</td>
+    <td>${sd.siparis_var_mi ? '<span class="badge badge-gold">📦</span>' : '<span class="badge badge-gray">Görüşme</span>'}</td>
+    <td>${c.recording_url ? `<button class="audio-btn" onclick="window.open('${c.recording_url}','_blank')">▶</button>` : '—'}</td>
   </tr>`;
 }
 
@@ -638,8 +619,8 @@ async function loadCalls() {
   const r = await fetch('/api/calls?limit=3');
   const calls = await r.json();
   const el = document.getElementById('son-aramalar-container');
-  if (!calls.length) { el.innerHTML = '<div class="empty">HenÃ¼z arama yok</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>Tarih</th><th>Numara</th><th>MÃ¼ÅŸteri</th><th>SÃ¼re</th><th>Durum</th><th>KayÄ±t</th></tr></thead><tbody>${calls.map(c=>callRow(c,false)).join('')}</tbody></table>`;
+  if (!calls.length) { el.innerHTML = '<div class="empty">Henüz arama yok</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Tarih</th><th>Numara</th><th>Müşteri</th><th>Süre</th><th>Durum</th><th>Kayıt</th></tr></thead><tbody>${calls.map(c=>callRow(c,false)).join('')}</tbody></table>`;
 }
 
 async function loadAllCalls(search='') {
@@ -647,8 +628,8 @@ async function loadAllCalls(search='') {
   const r = await fetch(`/api/calls?limit=200${q}`);
   const calls = await r.json();
   const el = document.getElementById('aramalar-container');
-  if (!calls.length) { el.innerHTML = '<div class="empty">SonuÃ§ bulunamadÄ±</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>Tarih</th><th>Numara</th><th>MÃ¼ÅŸteri</th><th>SipariÅŸ</th><th>SÃ¼re</th><th>Durum</th><th>KayÄ±t</th></tr></thead><tbody>${calls.map(c=>callRow(c,true)).join('')}</tbody></table>`;
+  if (!calls.length) { el.innerHTML = '<div class="empty">Sonuç bulunamadı</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Tarih</th><th>Numara</th><th>Müşteri</th><th>Sipariş</th><th>Süre</th><th>Durum</th><th>Kayıt</th></tr></thead><tbody>${calls.map(c=>callRow(c,true)).join('')}</tbody></table>`;
 }
 
 async function loadCustomers(search='') {
@@ -656,12 +637,12 @@ async function loadCustomers(search='') {
   const r = await fetch(`/api/customers${q}`);
   const data = await r.json();
   const el = document.getElementById('musteriler-container');
-  if (!data.length) { el.innerHTML = '<div class="empty">SonuÃ§ bulunamadÄ±</div>'; return; }
-  el.innerHTML = `<table><thead><tr><th>Numara</th><th>Ä°sim</th><th>Adres</th><th>Arama</th><th>Son Arama</th></tr></thead><tbody>${data.map(c=>`
+  if (!data.length) { el.innerHTML = '<div class="empty">Sonuç bulunamadı</div>'; return; }
+  el.innerHTML = `<table><thead><tr><th>Numara</th><th>İsim</th><th>Adres</th><th>Arama</th><th>Son Arama</th></tr></thead><tbody>${data.map(c=>`
     <tr>
       <td class="phone">${c.phone_number}</td>
-      <td>${[c.name,c.surname].filter(Boolean).join(' ')||'â€”'}</td>
-      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.address||'â€”'}</td>
+      <td>${[c.name,c.surname].filter(Boolean).join(' ')||'—'}</td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.address||'—'}</td>
       <td><span class="badge badge-green">${c.call_count||0}</span></td>
       <td>${fmt(c.last_call_at)}</td>
     </tr>`).join('')}</tbody></table>`;
@@ -675,15 +656,15 @@ async function loadOrders(search='') {
   const r = await fetch(`/api/orders?${q}`);
   const data = await r.json();
   const el = document.getElementById('siparisler-container');
-  if (!data.length) { el.innerHTML = `<div class="empty">${isArchive?'ArÅŸivde sipariÅŸ yok':'Aktif sipariÅŸ yok'}</div>`; return; }
-  el.innerHTML = `<table><thead><tr><th>Tarih</th><th>MÃ¼ÅŸteri</th><th>Numara</th><th>SipariÅŸ</th><th>Tutar</th><th>Ã–deme</th><th>Durum</th><th>Ä°ÅŸlem</th></tr></thead><tbody>${data.map(o=>`
+  if (!data.length) { el.innerHTML = `<div class="empty">${isArchive?'Arşivde sipariş yok':'Aktif sipariş yok'}</div>`; return; }
+  el.innerHTML = `<table><thead><tr><th>Tarih</th><th>Müşteri</th><th>Numara</th><th>Sipariş</th><th>Tutar</th><th>Ödeme</th><th>Durum</th><th>İşlem</th></tr></thead><tbody>${data.map(o=>`
     <tr>
       <td>${fmt(o.created_at)}</td>
-      <td>${[o.name,o.surname].filter(Boolean).join(' ')||[o.customer_name,o.customer_surname].filter(Boolean).join(' ')||'â€”'}</td>
-      <td class="phone">${o.phone_number||'â€”'}</td>
-      <td><strong>${o.siparis_detayi||'â€”'}</strong></td>
-      <td>${o.tutar||'â€”'}</td>
-      <td>${o.odeme_yontemi||'â€”'}</td>
+      <td>${[o.name,o.surname].filter(Boolean).join(' ')||[o.customer_name,o.customer_surname].filter(Boolean).join(' ')||'—'}</td>
+      <td class="phone">${o.phone_number||'—'}</td>
+      <td><strong>${o.siparis_detayi||'—'}</strong></td>
+      <td>${o.tutar||'—'}</td>
+      <td>${o.odeme_yontemi||'—'}</td>
       <td>${statusBadge(o.status,o.archived_at)}</td>
       <td>${orderButtons(o)}</td>
     </tr>`).join('')}</tbody></table>`;
@@ -696,9 +677,9 @@ async function loadAnalytics(period, el) {
   const data = await r.json();
   const container = document.getElementById('analytics-container');
   if (!data.length) { container.innerHTML = '<div class="empty">Veri yok</div>'; return; }
-  container.innerHTML = `<table><thead><tr><th>Tarih</th><th>Toplam</th><th>Kargolanan</th><th>Ä°ptal</th></tr></thead><tbody>${data.map(d=>`
+  container.innerHTML = `<table><thead><tr><th>Tarih</th><th>Toplam</th><th>Kargolanan</th><th>İptal</th></tr></thead><tbody>${data.map(d=>`
     <tr>
-      <td>${d.tarih?new Date(d.tarih).toLocaleDateString('tr-TR'):'â€”'}</td>
+      <td>${d.tarih?new Date(d.tarih).toLocaleDateString('tr-TR'):'—'}</td>
       <td><strong>${d.toplam||0}</strong></td>
       <td><span class="badge badge-blue">${d.kargolanan||0}</span></td>
       <td><span class="badge badge-red">${d.iptal||0}</span></td>
@@ -706,29 +687,29 @@ async function loadAnalytics(period, el) {
 }
 
 async function loadDetail(callId) {
-  document.getElementById('detail-content').innerHTML = '<div class="loading">YÃ¼kleniyor...</div>';
+  document.getElementById('detail-content').innerHTML = '<div class="loading">Yükleniyor...</div>';
   document.getElementById('detail-overlay').classList.add('open');
   const r = await fetch(`/api/calls/${callId}`);
   const c = await r.json();
   const sd = c.summary_data || {};
-  const isim = [c.name, c.surname].filter(Boolean).join(' ') || 'â€”';
+  const isim = [c.name, c.surname].filter(Boolean).join(' ') || '—';
   document.getElementById('detail-content').innerHTML = `
     <div class="detail-title">${isim}</div>
     <div class="detail-section">
       <h4>Arama Bilgisi</h4>
-      <div class="detail-row"><label>Numara</label><span class="phone">${c.phone_number||'â€”'}</span></div>
+      <div class="detail-row"><label>Numara</label><span class="phone">${c.phone_number||'—'}</span></div>
       <div class="detail-row"><label>Tarih</label><span>${fmt(c.started_at)}</span></div>
-      <div class="detail-row"><label>SÃ¼re</label><span>${dur(c.duration_s)}</span></div>
-      ${c.recording_url?`<div class="detail-row"><label>KayÄ±t</label><button class="audio-btn" onclick="window.open('${c.recording_url}','_blank')">â–¶ Dinle</button></div>`:''}
+      <div class="detail-row"><label>Süre</label><span>${dur(c.duration_s)}</span></div>
+      ${c.recording_url?`<div class="detail-row"><label>Kayıt</label><button class="audio-btn" onclick="window.open('${c.recording_url}','_blank')">▶ Dinle</button></div>`:''}
     </div>
-    ${sd.siparis_var_mi?`<div class="detail-section"><h4>SipariÅŸ</h4>
-      <div class="detail-row"><label>ÃœrÃ¼n</label><span><strong>${sd.siparis_detayi||'â€”'}</strong></span></div>
-      <div class="detail-row"><label>Tutar</label><span>${sd.tutar||'â€”'}</span></div>
-      <div class="detail-row"><label>Ã–deme</label><span>${sd.odeme_yontemi||'â€”'}</span></div>
-      <div class="detail-row"><label>Adres</label><span>${sd.adres||'â€”'}</span></div>
+    ${sd.siparis_var_mi?`<div class="detail-section"><h4>Sipariş</h4>
+      <div class="detail-row"><label>Ürün</label><span><strong>${sd.siparis_detayi||'—'}</strong></span></div>
+      <div class="detail-row"><label>Tutar</label><span>${sd.tutar||'—'}</span></div>
+      <div class="detail-row"><label>Ödeme</label><span>${sd.odeme_yontemi||'—'}</span></div>
+      <div class="detail-row"><label>Adres</label><span>${sd.adres||'—'}</span></div>
     </div>`:''}
-    ${sd.ozet?`<div class="detail-section"><h4>Ã–zet</h4><p style="font-size:13px;line-height:1.6">${sd.ozet}</p></div>`:''}
-    ${c.transcripts&&c.transcripts.length?`<div class="detail-section"><h4>KonuÅŸma</h4>${c.transcripts.map(t=>`<div class="transcript-line ${t.role==='agent'?'transcript-agent':'transcript-user'}"><div class="transcript-role">${t.role==='agent'?'ğŸ¤– PÄ±nar':'ğŸ‘¤ MÃ¼ÅŸteri'}</div>${t.content}</div>`).join('')}</div>`:''}
+    ${sd.ozet?`<div class="detail-section"><h4>Özet</h4><p style="font-size:13px;line-height:1.6">${sd.ozet}</p></div>`:''}
+    ${c.transcripts&&c.transcripts.length?`<div class="detail-section"><h4>Konuşma</h4>${c.transcripts.map(t=>`<div class="transcript-line ${t.role==='agent'?'transcript-agent':'transcript-user'}"><div class="transcript-role">${t.role==='agent'?'🤖 Pınar':'👤 Müşteri'}</div>${t.content}</div>`).join('')}</div>`:''}
   `;
 }
 
@@ -738,7 +719,7 @@ function closeDetailPanel() { document.getElementById('detail-overlay').classLis
 loadStats(); loadCalls();
 setInterval(loadStats, 30000);
 
-// ---- YENÄ° FONKSÄ°YONLAR ----
+// ---- YENİ FONKSİYONLAR ----
 let _sTip = null, _silMusteri = null;
 
 function kapatModal(name) {
@@ -783,14 +764,14 @@ async function silAra(val) {
     const r=await fetch('/api/customers?search='+encodeURIComponent(val));
     const data=await r.json();
     if (!data.length) { el.style.display='none'; return; }
-    el.innerHTML=data.slice(0,5).map(c=>`<div class="search-result-item" onclick="silSec(${JSON.stringify(c).replace(/"/g,'&quot;')})"><strong>${[c.name,c.surname].filter(Boolean).join(' ')||'â€”'}</strong><span>${c.phone_number}</span></div>`).join('');
+    el.innerHTML=data.slice(0,5).map(c=>`<div class="search-result-item" onclick="silSec(${JSON.stringify(c).replace(/"/g,'&quot;')})"><strong>${[c.name,c.surname].filter(Boolean).join(' ')||'—'}</strong><span>${c.phone_number}</span></div>`).join('');
     el.style.display='block';
   },300);
 }
 
 function silSec(c) {
   _silMusteri=c;
-  document.getElementById('sil-bilgi').innerHTML=`<strong>${[c.name,c.surname].filter(Boolean).join(' ')||'â€”'}</strong><br>${c.phone_number}${c.address?'<br>'+c.address:''}`;
+  document.getElementById('sil-bilgi').innerHTML=`<strong>${[c.name,c.surname].filter(Boolean).join(' ')||'—'}</strong><br>${c.phone_number}${c.address?'<br>'+c.address:''}`;
   document.getElementById('sil-bilgi').style.display='block';
   document.getElementById('btn-sil').style.display='inline-block';
   document.getElementById('sil-sonuclar').style.display='none';
@@ -800,11 +781,11 @@ function silSec(c) {
 async function silOnayla() {
   if (!_silMusteri) return;
   const isim=[_silMusteri.name,_silMusteri.surname].filter(Boolean).join(' ')||_silMusteri.phone_number;
-  if (!confirm('"'+isim+'" ve tÃ¼m verileri silinsin mi?')) return;
+  if (!confirm('"'+isim+'" ve tüm verileri silinsin mi?')) return;
   try {
     const r=await fetch('/api/customers/'+encodeURIComponent(_silMusteri.phone_number),{method:'DELETE'});
     if (!r.ok) { const d=await r.json(); alert('Hata: '+(d.detail||'?')); return; }
-    alert('MÃ¼ÅŸteri silindi.');
+    alert('Müşteri silindi.');
     kapatModal('musteri-sil');
     loadCustomers(); loadStats();
   } catch(e) { alert('Hata'); }
@@ -826,105 +807,17 @@ async function siparisKaydet() {
     adres=document.getElementById('siparis-adres').value.trim();
   }
   const detay=document.getElementById('siparis-detay').value.trim();
-  if (!detay) { alert('SipariÅŸ detayÄ± zorunlu!'); return; }
-  if (!tel) { alert('MÃ¼ÅŸteri seÃ§in!'); return; }
+  if (!detay) { alert('Sipariş detayı zorunlu!'); return; }
+  if (!tel) { alert('Müşteri seçin!'); return; }
   try {
     const r=await fetch('/api/orders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone_number:tel,name:ad,surname:soyad,address:adres,siparis_detayi:detay,tutar:document.getElementById('siparis-tutar').value.trim(),odeme_yontemi:document.getElementById('siparis-odeme').value,status:'new'})});
     if (!r.ok) { const d=await r.json(); alert('Hata: '+(d.detail||'?')); return; }
-    alert('SipariÅŸ oluÅŸturuldu!');
+    alert('Sipariş oluşturuldu!');
     kapatModal('siparis-olustur');
     loadStats(); loadOrders();
   } catch(e) { alert('Hata'); }
 }
 
 </script>
-
-<!-- ÃœRÃœN EKLE MODAL -->
-<div class="modal-overlay" id="modal-urun-ekle">
-  <div class="modal">
-    <h3>â• ÃœrÃ¼n Ekle</h3>
-    <div id="ue-kategori" class="siparis-tip-sec">
-      <button class="tip-btn" onclick="urunEkleSec('zeytin',this)">
-        <span class="tip-icon">ğŸ«’</span>
-        <span class="tip-label">Zeytin</span>
-      </button>
-      <button class="tip-btn" onclick="urunEkleSec('zeytinyagi',this)">
-        <span class="tip-icon">ğŸ«™</span>
-        <span class="tip-label">ZeytinyaÄŸÄ±</span>
-      </button>
-    </div>
-    <div id="ue-form" style="display:none">
-      <div class="form-group"><label>ÃœrÃ¼n AdÄ± *</label><input class="form-input" id="ue-ad" placeholder="Ã¶rn: Siyah Zeytin"></div>
-      <div class="form-row">
-        <div class="form-group"><label>Alt Kategori</label><input class="form-input" id="ue-subcat" placeholder="Ã¶rn: siyah, yesil, sizma"></div>
-        <div class="form-group"><label>Miktar</label>
-          <div style="display:flex;gap:6px;">
-            <input class="form-input" id="ue-weight" placeholder="10" style="flex:1">
-            <input class="form-input" id="ue-unit" placeholder="kg" style="width:60px">
-          </div>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>KapÄ±da Ã–deme (TL)</label><input class="form-input" id="ue-cod" placeholder="0" type="number"></div>
-        <div class="form-group"><label>EFT/Havale (TL)</label><input class="form-input" id="ue-eft" placeholder="0" type="number"></div>
-      </div>
-      <div class="form-group"><label>ÃœrÃ¼n Bilgisi</label><input class="form-input" id="ue-desc" placeholder="Az tuzlu, doÄŸal..."></div>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="kapatModal('urun-ekle')">Ä°ptal</button>
-      <button class="modal-btn modal-btn-save" onclick="urunEkleKaydet()" id="btn-ue-kaydet" style="display:none">Kaydet</button>
-    </div>
-  </div>
-</div>
-
-<!-- ÃœRÃœN GÃœNCELLE MODAL -->
-<div class="modal-overlay" id="modal-urun-guncelle">
-  <div class="modal" style="width:560px">
-    <h3>âœï¸ ÃœrÃ¼n GÃ¼ncelle / Sil</h3>
-    <div id="ug-kategori" class="siparis-tip-sec">
-      <button class="tip-btn" onclick="urunGuncelleSec('zeytin',this)">
-        <span class="tip-icon">ğŸ«’</span>
-        <span class="tip-label">Zeytin</span>
-      </button>
-      <button class="tip-btn" onclick="urunGuncelleSec('zeytinyagi',this)">
-        <span class="tip-icon">ğŸ«™</span>
-        <span class="tip-label">ZeytinyaÄŸÄ±</span>
-      </button>
-    </div>
-    <div id="ug-liste" style="display:none">
-      <div id="ug-liste-container"></div>
-    </div>
-    <div id="ug-form" style="display:none">
-      <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
-      <div class="form-group"><label>ÃœrÃ¼n AdÄ± *</label><input class="form-input" id="ug-ad"></div>
-      <div class="form-row">
-        <div class="form-group"><label>Alt Kategori</label><input class="form-input" id="ug-subcat"></div>
-        <div class="form-group"><label>Miktar</label>
-          <div style="display:flex;gap:6px;">
-            <input class="form-input" id="ug-weight" style="flex:1">
-            <input class="form-input" id="ug-unit" style="width:60px">
-          </div>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label>KapÄ±da Ã–deme (TL)</label><input class="form-input" id="ug-cod" type="number"></div>
-        <div class="form-group"><label>EFT/Havale (TL)</label><input class="form-input" id="ug-eft" type="number"></div>
-      </div>
-      <div class="form-group"><label>ÃœrÃ¼n Bilgisi</label><input class="form-input" id="ug-desc"></div>
-      <div class="form-group">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-          <input type="checkbox" id="ug-active"> <span>Aktif</span>
-        </label>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="ugGeriDon()" id="btn-ug-geri" style="display:none">â† Geri</button>
-      <button class="modal-btn modal-btn-cancel" onclick="kapatModal('urun-guncelle')">Kapat</button>
-      <button class="modal-btn modal-btn-save" onclick="urunGuncelleKaydet()" id="btn-ug-kaydet" style="display:none">GÃ¼ncelle</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
-
