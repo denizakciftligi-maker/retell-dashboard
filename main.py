@@ -340,3 +340,23 @@ def delete_product(product_id: str, conn=Depends(get_db), _=Depends(verify)):
     cur.execute("DELETE FROM products WHERE id = %s", (product_id,))
     conn.commit()
     return {"success": True}
+
+
+# KAPIDA ODEME AYARI - DB'den okur
+@app.get("/api/settings/kapida-odeme")
+def get_kapida(conn=Depends(get_db), _=Depends(verify)):
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    try:
+        cur.execute("SELECT value FROM settings WHERE key = 'kapida_odeme_aktif'")
+        row = cur.fetchone()
+        return {"aktif": row["value"] != "false" if row else True}
+    except:
+        return {"aktif": True}
+
+@app.post("/api/settings/kapida-odeme")
+def set_kapida(body: dict, conn=Depends(get_db), _=Depends(verify)):
+    cur = conn.cursor()
+    cur.execute("INSERT INTO settings (key, value) VALUES ('kapida_odeme_aktif', %s) ON CONFLICT (key) DO UPDATE SET value = %s",
+        ("true" if body.get("aktif", True) else "false",) * 2)
+    conn.commit()
+    return {"success": True}
