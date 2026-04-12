@@ -160,6 +160,7 @@ tr:hover td { background: var(--olive-pale); }
     <div class="nav-item" onclick="showPage('siparisler', this)"><span class="nav-icon">📦</span><span>Siparişler</span></div>
     <div class="nav-item" onclick="showPage('aramalar', this)"><span class="nav-icon">📞</span><span>Aramalar</span></div>
     <div class="nav-item" onclick="showPage('musteriler', this)"><span class="nav-icon">👥</span><span>Müşteriler</span></div>
+    <div class="nav-item" onclick="showPage('urunler', this)"><span class="nav-icon">🫒</span><span>&#220;r&#252;nler</span></div>
     <div class="nav-item" onclick="showPage('analytics', this)"><span class="nav-icon">📈</span><span>Analitik</span></div>
   </nav>
   <div class="sidebar-footer"><span class="status-dot"></span>Sistem aktif</div>
@@ -253,6 +254,23 @@ tr:hover td { background: var(--olive-pale); }
       <button class="refresh-btn" onclick="loadCustomers()">↻ Yenile</button>
     </div>
     <div class="table-card"><div id="musteriler-container"><div class="loading">Yükleniyor...</div></div></div>
+  </div>
+
+
+  <!-- URUNLER -->
+  <div class="page" id="page-urunler">
+    <div class="page-header"><div class="page-header-left"><h2>&#220;r&#252;nler</h2><p>&#220;r&#252;n katalo&#287;u y&#246;netimi</p></div></div>
+    <div class="action-bar" style="margin-bottom:16px;">
+      <button class="action-bar-btn btn-primary" onclick="openModal('urun-ekle')">&#10133; &#220;r&#252;n Ekle</button>
+      <button class="action-bar-btn btn-secondary" onclick="openModal('urun-guncelle')">&#9998;&#65039; &#220;r&#252;n G&#252;ncelle / Sil</button>
+    </div>
+    <div class="toolbar">
+      <button class="toolbar-btn active-tab" id="ut-hepsi" onclick="urunTabSec('',this)">T&#252;m&#252;</button>
+      <button class="toolbar-btn" id="ut-zeytin" onclick="urunTabSec('zeytin',this)">Zeytin</button>
+      <button class="toolbar-btn" id="ut-yagi" onclick="urunTabSec('zeytinyagi',this)">Zeytinya&#287;&#305;</button>
+      <button class="refresh-btn" onclick="loadUrunler()">&#8635;</button>
+    </div>
+    <div class="table-card"><div id="urunler-container"><div class="loading">Y&#252;kleniyor...</div></div></div>
   </div>
 
   <!-- ANALİTİK -->
@@ -418,6 +436,7 @@ function showPage(name, el) {
   if (name === 'aramalar') loadAllCalls();
   if (name === 'musteriler') loadCustomers();
   if (name === 'analytics') loadAnalytics('daily');
+  if (name === 'urunler') loadUrunler();
 }
 
 // MODAL
@@ -819,5 +838,91 @@ async function siparisKaydet() {
 }
 
 </script>
+
+<!-- URUN EKLE MODAL -->
+<div class="modal-overlay" id="modal-urun-ekle">
+  <div class="modal">
+    <h3>&#10133; &#220;r&#252;n Ekle</h3>
+    <div id="ue-kat-sec" style="display:flex;gap:12px;margin-bottom:20px;">
+      <button class="tip-btn" id="ue-btn-zeytin" onclick="urunEkleKatSec('zeytin',this)">
+        <span class="tip-icon">🫒</span>
+        <span class="tip-label">Zeytin</span>
+      </button>
+      <button class="tip-btn" id="ue-btn-yagi" onclick="urunEkleKatSec('zeytinyagi',this)">
+        <span class="tip-icon">🫙</span>
+        <span class="tip-label">Zeytinya&#287;&#305;</span>
+      </button>
+    </div>
+    <div id="ue-form" style="display:none;">
+      <div class="form-group"><label>&#220;r&#252;n Ad&#305; *</label><input class="form-input" id="ue-ad" placeholder="Siyah Zeytin"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Alt Kategori</label><input class="form-input" id="ue-subcat" placeholder="siyah, yesil, sizma..."></div>
+        <div class="form-group"><label>Miktar + Birim</label>
+          <div style="display:flex;gap:6px;">
+            <input class="form-input" id="ue-weight" placeholder="10" style="flex:1;" type="number">
+            <input class="form-input" id="ue-unit" placeholder="kg" style="width:56px;">
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Kap&#305;da &#214;deme (TL)</label><input class="form-input" id="ue-cod" placeholder="0" type="number"></div>
+        <div class="form-group"><label>EFT/Havale (TL)</label><input class="form-input" id="ue-eft" placeholder="0" type="number"></div>
+      </div>
+      <div class="form-group"><label>&#220;r&#252;n Bilgisi</label><input class="form-input" id="ue-desc" placeholder="Az tuzlu, do&#287;al..."></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="urunEkleKapat()">&#304;ptal</button>
+      <button class="modal-btn modal-btn-save" onclick="urunEkleKaydet()" id="btn-ue-kaydet" style="display:none;">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- URUN GUNCELLE MODAL -->
+<div class="modal-overlay" id="modal-urun-guncelle">
+  <div class="modal" style="width:540px;max-width:95vw;">
+    <h3>&#9998;&#65039; &#220;r&#252;n G&#252;ncelle / Sil</h3>
+    <div id="ug-kat-sec" style="display:flex;gap:12px;margin-bottom:20px;">
+      <button class="tip-btn" onclick="urunGuncelleKatSec('zeytin',this)">
+        <span class="tip-icon">🫒</span>
+        <span class="tip-label">Zeytin</span>
+      </button>
+      <button class="tip-btn" onclick="urunGuncelleKatSec('zeytinyagi',this)">
+        <span class="tip-icon">🫙</span>
+        <span class="tip-label">Zeytinya&#287;&#305;</span>
+      </button>
+    </div>
+    <div id="ug-liste" style="display:none;">
+      <div id="ug-liste-icerik" style="max-height:300px;overflow-y:auto;"></div>
+    </div>
+    <div id="ug-form" style="display:none;">
+      <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+      <div class="form-group"><label>&#220;r&#252;n Ad&#305; *</label><input class="form-input" id="ug-ad"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Alt Kategori</label><input class="form-input" id="ug-subcat"></div>
+        <div class="form-group"><label>Miktar + Birim</label>
+          <div style="display:flex;gap:6px;">
+            <input class="form-input" id="ug-weight" style="flex:1;" type="number">
+            <input class="form-input" id="ug-unit" style="width:56px;">
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Kap&#305;da &#214;deme (TL)</label><input class="form-input" id="ug-cod" type="number"></div>
+        <div class="form-group"><label>EFT/Havale (TL)</label><input class="form-input" id="ug-eft" type="number"></div>
+      </div>
+      <div class="form-group"><label>&#220;r&#252;n Bilgisi</label><input class="form-input" id="ug-desc"></div>
+      <div class="form-group" style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+        <input type="checkbox" id="ug-active" style="width:auto;">
+        <label for="ug-active" style="cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px;color:var(--text);">Aktif</label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="ugGeriDon()" id="btn-ug-geri" style="display:none;">&#8592; Geri</button>
+      <button class="modal-btn modal-btn-cancel" onclick="urunGuncelleKapat()">Kapat</button>
+      <button class="modal-btn modal-btn-save" onclick="urunGuncelleKaydet()" id="btn-ug-kaydet" style="display:none;">G&#252;ncelle</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
