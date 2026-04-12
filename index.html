@@ -265,10 +265,10 @@ tr:hover td { background: var(--olive-pale); }
       <button class="action-bar-btn btn-secondary" onclick="openModal('urun-guncelle')">✏️ Ürün Güncelle / Sil</button>
     </div>
     <div class="toolbar">
-      <button class="toolbar-btn active-tab" id="ut-hepsi" onclick="urunTabSec('',this)">Tümü</button>
-      <button class="toolbar-btn" id="ut-zeytin" onclick="urunTabSec('zeytin',this)">🫒 Zeytin</button>
-      <button class="toolbar-btn" id="ut-yagi" onclick="urunTabSec('zeytinyagi',this)">🫙 Zeytinyağı</button>
-      <button class="refresh-btn" onclick="loadUrunler()">↻</button>
+      <button class="toolbar-btn active-tab" id="ut-hepsi" onclick="window.urunTabSec('',this)">Tümü</button>
+      <button class="toolbar-btn" id="ut-zeytin" onclick="window.urunTabSec('zeytin',this)">🫒 Zeytin</button>
+      <button class="toolbar-btn" id="ut-yagi" onclick="window.urunTabSec('zeytinyagi',this)">🫙 Zeytinyağı</button>
+      <button class="refresh-btn" onclick="window.loadUrunler()">↻</button>
     </div>
     <div class="table-card"><div id="urunler-container"><div class="loading">Yükleniyor...</div></div></div>
   </div>
@@ -436,7 +436,7 @@ function showPage(name, el) {
   if (name === 'aramalar') loadAllCalls();
   if (name === 'musteriler') loadCustomers();
   if (name === 'analytics') loadAnalytics('daily');
-  if (name === 'urunler') { setTimeout(function(){ loadUrunler(); }, 50); }
+  if (name === 'urunler') { setTimeout(function(){ window.loadUrunler(); }, 50); }
 }
 
 // MODAL
@@ -843,159 +843,98 @@ var _urunKat = '';
 var _editUrunId = null;
 var _ueKat = '';
 var _ugUrunler = [];
-
 window.urunTabSec = function(cat, btn) {
   _urunKat = cat;
   ['ut-hepsi','ut-zeytin','ut-yagi'].forEach(function(id){ var el=document.getElementById(id); if(el) el.classList.remove('active-tab'); });
   if (btn) btn.classList.add('active-tab');
   window.loadUrunler();
 };
-
 window.loadUrunler = async function() {
-  var q = _urunKat ? '?category=' + _urunKat : '';
+  var q = _urunKat ? '?category='+_urunKat : '';
   try {
-    var r = await fetch('/api/products' + q);
+    var r = await fetch('/api/products'+q);
     var data = await r.json();
     var el = document.getElementById('urunler-container');
     if (!data.length) { el.innerHTML = '<div class="empty">Urun yok.</div>'; return; }
-    var rows = data.map(function(p) {
-      var kat = p.category === 'zeytin' ? 'Zeytin' : 'Zeytinyagi';
-      var durum = p.active ? '<span class="badge badge-green">Aktif</span>' : '<span class="badge badge-gray">Pasif</span>';
-      return '<tr><td><strong>' + (p.name||'') + '</strong>' + (p.subcategory ? '<br><span style="font-size:11px;color:var(--muted)">' + p.subcategory + '</span>' : '') + '</td><td>' + kat + '</td><td>' + (p.weight||'') + ' ' + (p.unit||'') + '</td><td>' + (p.price_cod ? p.price_cod + ' TL' : '-') + '</td><td>' + (p.price_eft ? p.price_eft + ' TL' : '-') + '</td><td>' + (p.description||'-') + '</td><td>' + durum + '</td></tr>';
+    var rows = data.map(function(p){
+      return '<tr><td><strong>'+(p.name||'')+'</strong>'+(p.subcategory?'<br><span style="font-size:11px;color:var(--muted)">'+p.subcategory+'</span>':'')+'</td><td>'+(p.category==='zeytin'?'Zeytin':'Zeytinyagi')+'</td><td>'+(p.weight||'')+' '+(p.unit||'')+'</td><td>'+(p.price_cod?p.price_cod+' TL':'-')+'</td><td>'+(p.price_eft?p.price_eft+' TL':'-')+'</td><td>'+(p.description||'-')+'</td><td>'+(p.active?'<span class="badge badge-green">Aktif</span>':'<span class="badge badge-gray">Pasif</span>')+'</td></tr>';
     });
-    el.innerHTML = '<table><thead><tr><th>Urun</th><th>Kategori</th><th>Miktar</th><th>Kapida</th><th>EFT</th><th>Bilgi</th><th>Durum</th></tr></thead><tbody>' + rows.join('') + '</tbody></table>';
+    el.innerHTML = '<table><thead><tr><th>Urun</th><th>Kat</th><th>Miktar</th><th>Kapida</th><th>EFT</th><th>Bilgi</th><th>Durum</th></tr></thead><tbody>'+rows.join('')+'</tbody></table>';
   } catch(e) { document.getElementById('urunler-container').innerHTML = '<div class="empty">Hata</div>'; }
 };
-
 window.urunEkleKatSec = function(kat, btn) {
   _ueKat = kat;
   document.querySelectorAll('#ue-kat-sec .tip-btn').forEach(function(b){ b.classList.remove('selected'); });
   btn.classList.add('selected');
   document.getElementById('ue-form').style.display = 'block';
   document.getElementById('btn-ue-kaydet').style.display = 'inline-block';
-  document.getElementById('ue-unit').value = kat === 'zeytin' ? 'kg' : 'L';
+  document.getElementById('ue-unit').value = kat==='zeytin'?'kg':'L';
 };
-
 window.urunEkleKapat = function() {
   document.getElementById('modal-urun-ekle').classList.remove('open');
-  _ueKat = '';
-  document.getElementById('ue-form').style.display = 'none';
-  document.getElementById('btn-ue-kaydet').style.display = 'none';
+  _ueKat=''; document.getElementById('ue-form').style.display='none'; document.getElementById('btn-ue-kaydet').style.display='none';
   document.querySelectorAll('#ue-kat-sec .tip-btn').forEach(function(b){ b.classList.remove('selected'); });
   ['ue-ad','ue-subcat','ue-weight','ue-unit','ue-cod','ue-eft','ue-desc'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
 };
-
 window.urunEkleKaydet = async function() {
-  var ad = document.getElementById('ue-ad').value.trim();
+  var ad=document.getElementById('ue-ad').value.trim();
   if (!ad) { alert('Urun adi zorunlu!'); return; }
   if (!_ueKat) { alert('Kategori secin!'); return; }
   try {
-    var r = await fetch('/api/products', {
-      method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ name: ad, category: _ueKat,
-        subcategory: document.getElementById('ue-subcat').value.trim(),
-        weight: parseFloat(document.getElementById('ue-weight').value)||0,
-        unit: document.getElementById('ue-unit').value.trim()||'kg',
-        price_cod: parseFloat(document.getElementById('ue-cod').value)||0,
-        price_eft: parseFloat(document.getElementById('ue-eft').value)||0,
-        description: document.getElementById('ue-desc').value.trim() })
-    });
+    var r=await fetch('/api/products',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:ad,category:_ueKat,subcategory:document.getElementById('ue-subcat').value.trim(),weight:parseFloat(document.getElementById('ue-weight').value)||0,unit:document.getElementById('ue-unit').value.trim()||'kg',price_cod:parseFloat(document.getElementById('ue-cod').value)||0,price_eft:parseFloat(document.getElementById('ue-eft').value)||0,description:document.getElementById('ue-desc').value.trim()})});
     if (!r.ok) { alert('Hata'); return; }
-    alert('Urun eklendi!');
-    window.urunEkleKapat();
-    window.loadUrunler();
-  } catch(e) { alert('Hata: ' + e); }
+    alert('Urun eklendi!'); window.urunEkleKapat(); window.loadUrunler();
+  } catch(e) { alert('Hata: '+e); }
 };
-
 window.urunGuncelleKatSec = async function(kat, btn) {
   document.querySelectorAll('#ug-kat-sec .tip-btn').forEach(function(b){ b.classList.remove('selected'); });
   btn.classList.add('selected');
-  document.getElementById('ug-kat-sec').style.display = 'none';
-  document.getElementById('ug-form').style.display = 'none';
-  document.getElementById('btn-ug-kaydet').style.display = 'none';
-  document.getElementById('btn-ug-geri').style.display = 'inline-block';
-  document.getElementById('ug-liste').style.display = 'block';
-  document.getElementById('ug-liste-icerik').innerHTML = '<div class="loading">Yukleniyor...</div>';
+  document.getElementById('ug-kat-sec').style.display='none';
+  document.getElementById('ug-form').style.display='none';
+  document.getElementById('btn-ug-kaydet').style.display='none';
+  document.getElementById('btn-ug-geri').style.display='inline-block';
+  document.getElementById('ug-liste').style.display='block';
+  document.getElementById('ug-liste-icerik').innerHTML='<div class="loading">Yukleniyor...</div>';
   try {
-    var r = await fetch('/api/products?category=' + kat);
-    _ugUrunler = await r.json();
-    if (!_ugUrunler.length) { document.getElementById('ug-liste-icerik').innerHTML = '<div class="empty">Bu kategoride urun yok</div>'; return; }
-    var html = _ugUrunler.map(function(p) {
-      var pid = p.id; var pname = (p.name||'').replace(/'/g,'');
-      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--border);">' +
-        '<div><strong>' + (p.name||'') + '</strong> ' + (p.weight ? p.weight+' '+(p.unit||'') : '') +
-        '<br><span style="font-size:12px;color:var(--muted)">' + (p.price_cod?'Kapida: '+p.price_cod+' TL  ':'') + (p.price_eft?'EFT: '+p.price_eft+' TL':'') + '</span></div>' +
-        '<div style="display:flex;gap:6px;">' +
-        '<button class="action-btn btn-ship" onclick="window.urunDuzenleAc(\"' + pid + '\")">Duzenle</button>' +
-        '<button class="action-btn btn-cancel" onclick="window.urunSilOnay(\"' + pid + '\",\"' + pname + '\")">Sil</button>' +
-        '</div></div>';
-    });
-    document.getElementById('ug-liste-icerik').innerHTML = html.join('');
-  } catch(e) { document.getElementById('ug-liste-icerik').innerHTML = '<div class="empty">Hata</div>'; }
+    var r=await fetch('/api/products?category='+kat);
+    _ugUrunler=await r.json();
+    if (!_ugUrunler.length) { document.getElementById('ug-liste-icerik').innerHTML='<div class="empty">Urun yok</div>'; return; }
+    document.getElementById('ug-liste-icerik').innerHTML=_ugUrunler.map(function(p,idx){
+      return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--border);">'+
+        '<div><strong>'+(p.name||'')+'</strong> '+(p.weight?p.weight+' '+(p.unit||''):'')+'<br><span style="font-size:12px;color:var(--muted)">'+(p.price_cod?'Kapida: '+p.price_cod+' TL  ':'')+(p.price_eft?'EFT: '+p.price_eft+' TL':'')+'</span></div>'+
+        '<div style="display:flex;gap:6px;"><button class="action-btn btn-ship" onclick="window.urunDuzenleAc('+idx+')">Duzenle</button>'+
+        '<button class="action-btn btn-cancel" onclick="window.urunSilOnay('+idx+')">Sil</button></div></div>';
+    }).join('');
+  } catch(e) { document.getElementById('ug-liste-icerik').innerHTML='<div class="empty">Hata</div>'; }
 };
-
 window.ugGeriDon = function() {
-  _editUrunId = null;
-  document.getElementById('ug-liste').style.display = 'none';
-  document.getElementById('ug-form').style.display = 'none';
-  document.getElementById('btn-ug-kaydet').style.display = 'none';
-  document.getElementById('btn-ug-geri').style.display = 'none';
-  document.getElementById('ug-kat-sec').style.display = 'flex';
+  _editUrunId=null;
+  document.getElementById('ug-liste').style.display='none'; document.getElementById('ug-form').style.display='none';
+  document.getElementById('btn-ug-kaydet').style.display='none'; document.getElementById('btn-ug-geri').style.display='none';
+  document.getElementById('ug-kat-sec').style.display='flex';
   document.querySelectorAll('#ug-kat-sec .tip-btn').forEach(function(b){ b.classList.remove('selected'); });
 };
-
-window.urunGuncelleKapat = function() {
-  document.getElementById('modal-urun-guncelle').classList.remove('open');
-  window.ugGeriDon();
+window.urunGuncelleKapat = function() { document.getElementById('modal-urun-guncelle').classList.remove('open'); window.ugGeriDon(); };
+window.urunDuzenleAc = function(idx) {
+  var p=_ugUrunler[idx]; if (!p) return; _editUrunId=p.id;
+  document.getElementById('ug-ad').value=p.name||''; document.getElementById('ug-subcat').value=p.subcategory||'';
+  document.getElementById('ug-weight').value=p.weight||''; document.getElementById('ug-unit').value=p.unit||'';
+  document.getElementById('ug-cod').value=p.price_cod||''; document.getElementById('ug-eft').value=p.price_eft||'';
+  document.getElementById('ug-desc').value=p.description||''; document.getElementById('ug-active').checked=p.active!==false;
+  document.getElementById('ug-liste').style.display='none'; document.getElementById('ug-form').style.display='block';
+  document.getElementById('btn-ug-kaydet').style.display='inline-block';
 };
-
-window.urunDuzenleAc = function(id) {
-  var p = _ugUrunler.find(function(x){ return x.id===id; });
-  if (!p) return;
-  _editUrunId = id;
-  document.getElementById('ug-ad').value = p.name||'';
-  document.getElementById('ug-subcat').value = p.subcategory||'';
-  document.getElementById('ug-weight').value = p.weight||'';
-  document.getElementById('ug-unit').value = p.unit||'';
-  document.getElementById('ug-cod').value = p.price_cod||'';
-  document.getElementById('ug-eft').value = p.price_eft||'';
-  document.getElementById('ug-desc').value = p.description||'';
-  document.getElementById('ug-active').checked = p.active !== false;
-  document.getElementById('ug-liste').style.display = 'none';
-  document.getElementById('ug-form').style.display = 'block';
-  document.getElementById('btn-ug-kaydet').style.display = 'inline-block';
+window.urunSilOnay = async function(idx) {
+  var p=_ugUrunler[idx]; if (!p) return;
+  if (!confirm('"'+(p.name||'')+'" silinsin mi?')) return;
+  try { var r=await fetch('/api/products/'+p.id,{method:'DELETE'}); if (!r.ok){alert('Hata');return;} alert('Silindi.'); window.urunGuncelleKapat(); window.loadUrunler(); } catch(e){alert('Hata');}
 };
-
 window.urunGuncelleKaydet = async function() {
   if (!_editUrunId) return;
   try {
-    var r = await fetch('/api/products/'+_editUrunId, {
-      method: 'PATCH', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({ name: document.getElementById('ug-ad').value.trim(),
-        subcategory: document.getElementById('ug-subcat').value.trim(),
-        weight: parseFloat(document.getElementById('ug-weight').value)||0,
-        unit: document.getElementById('ug-unit').value.trim(),
-        price_cod: parseFloat(document.getElementById('ug-cod').value)||0,
-        price_eft: parseFloat(document.getElementById('ug-eft').value)||0,
-        description: document.getElementById('ug-desc').value.trim(),
-        active: document.getElementById('ug-active').checked })
-    });
-    if (!r.ok) { alert('Hata'); return; }
-    alert('Urun guncellendi!');
-    window.urunGuncelleKapat();
-    window.loadUrunler();
-  } catch(e) { alert('Hata: '+e); }
-};
-
-window.urunSilOnay = async function(id, ad) {
-  if (!confirm('"'+ad+'" silinsin mi?')) return;
-  try {
-    var r = await fetch('/api/products/'+id, {method:'DELETE'});
-    if (!r.ok) { alert('Hata'); return; }
-    alert('Urun silindi.');
-    window.urunGuncelleKapat();
-    window.loadUrunler();
-  } catch(e) { alert('Hata'); }
+    var r=await fetch('/api/products/'+_editUrunId,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:document.getElementById('ug-ad').value.trim(),subcategory:document.getElementById('ug-subcat').value.trim(),weight:parseFloat(document.getElementById('ug-weight').value)||0,unit:document.getElementById('ug-unit').value.trim(),price_cod:parseFloat(document.getElementById('ug-cod').value)||0,price_eft:parseFloat(document.getElementById('ug-eft').value)||0,description:document.getElementById('ug-desc').value.trim(),active:document.getElementById('ug-active').checked})});
+    if (!r.ok){alert('Hata');return;} alert('Guncellendi!'); window.urunGuncelleKapat(); window.loadUrunler();
+  } catch(e){alert('Hata: '+e);}
 };
 
 </script>
@@ -1005,82 +944,57 @@ window.urunSilOnay = async function(id, ad) {
   <div class="modal">
     <h3>➕ Ürün Ekle</h3>
     <div id="ue-kat-sec" style="display:flex;gap:12px;margin-bottom:20px;">
-      <button class="tip-btn" onclick="urunEkleKatSec('zeytin',this)">
-        <span class="tip-icon">🫒</span>
-        <span class="tip-label">Zeytin</span>
-      </button>
-      <button class="tip-btn" onclick="urunEkleKatSec('zeytinyagi',this)">
-        <span class="tip-icon">🫙</span>
-        <span class="tip-label">Zeytinyağı</span>
-      </button>
+      <button class="tip-btn" onclick="window.urunEkleKatSec('zeytin',this)"><span class="tip-icon">🫒</span><span class="tip-label">Zeytin</span></button>
+      <button class="tip-btn" onclick="window.urunEkleKatSec('zeytinyagi',this)"><span class="tip-icon">🫙</span><span class="tip-label">Zeytinyağı</span></button>
     </div>
     <div id="ue-form" style="display:none;">
       <div class="form-group"><label>Ürün Adı *</label><input class="form-input" id="ue-ad" placeholder="Siyah Zeytin"></div>
       <div class="form-row">
-        <div class="form-group"><label>Alt Kategori</label><input class="form-input" id="ue-subcat" placeholder="siyah, yesil, sizma..."></div>
-        <div class="form-group"><label>Miktar + Birim</label>
-          <div style="display:flex;gap:6px;">
-            <input class="form-input" id="ue-weight" placeholder="10" style="flex:1;" type="number">
-            <input class="form-input" id="ue-unit" placeholder="kg" style="width:56px;">
-          </div>
-        </div>
+        <div class="form-group"><label>Alt Kategori</label><input class="form-input" id="ue-subcat" placeholder="siyah, yesil..."></div>
+        <div class="form-group"><label>Miktar + Birim</label><div style="display:flex;gap:6px;"><input class="form-input" id="ue-weight" placeholder="10" style="flex:1;" type="number"><input class="form-input" id="ue-unit" placeholder="kg" style="width:56px;"></div></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Kapıda Ödeme (TL)</label><input class="form-input" id="ue-cod" placeholder="0" type="number"></div>
-        <div class="form-group"><label>EFT/Havale (TL)</label><input class="form-input" id="ue-eft" placeholder="0" type="number"></div>
+        <div class="form-group"><label>Kapıda (TL)</label><input class="form-input" id="ue-cod" placeholder="0" type="number"></div>
+        <div class="form-group"><label>EFT (TL)</label><input class="form-input" id="ue-eft" placeholder="0" type="number"></div>
       </div>
-      <div class="form-group"><label>Ürün Bilgisi</label><input class="form-input" id="ue-desc" placeholder="Az tuzlu, doğal..."></div>
+      <div class="form-group"><label>Bilgi</label><input class="form-input" id="ue-desc" placeholder="Az tuzlu..."></div>
     </div>
     <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="urunEkleKapat()">İptal</button>
-      <button class="modal-btn modal-btn-save" onclick="urunEkleKaydet()" id="btn-ue-kaydet" style="display:none;">Kaydet</button>
+      <button class="modal-btn modal-btn-cancel" onclick="window.urunEkleKapat()">İptal</button>
+      <button class="modal-btn modal-btn-save" onclick="window.urunEkleKaydet()" id="btn-ue-kaydet" style="display:none;">Kaydet</button>
     </div>
   </div>
 </div>
-
 <!-- ÜRÜN GÜNCELLE MODAL -->
 <div class="modal-overlay" id="modal-urun-guncelle">
   <div class="modal" style="width:540px;max-width:95vw;">
     <h3>✏️ Ürün Güncelle / Sil</h3>
     <div id="ug-kat-sec" style="display:flex;gap:12px;margin-bottom:20px;">
-      <button class="tip-btn" onclick="urunGuncelleKatSec('zeytin',this)">
-        <span class="tip-icon">🫒</span>
-        <span class="tip-label">Zeytin</span>
-      </button>
-      <button class="tip-btn" onclick="urunGuncelleKatSec('zeytinyagi',this)">
-        <span class="tip-icon">🫙</span>
-        <span class="tip-label">Zeytinyağı</span>
-      </button>
+      <button class="tip-btn" onclick="window.urunGuncelleKatSec('zeytin',this)"><span class="tip-icon">🫒</span><span class="tip-label">Zeytin</span></button>
+      <button class="tip-btn" onclick="window.urunGuncelleKatSec('zeytinyagi',this)"><span class="tip-icon">🫙</span><span class="tip-label">Zeytinyağı</span></button>
     </div>
-    <div id="ug-liste" style="display:none;">
-      <div id="ug-liste-icerik" style="max-height:300px;overflow-y:auto;"></div>
-    </div>
+    <div id="ug-liste" style="display:none;"><div id="ug-liste-icerik" style="max-height:300px;overflow-y:auto;"></div></div>
     <div id="ug-form" style="display:none;">
       <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
       <div class="form-group"><label>Ürün Adı *</label><input class="form-input" id="ug-ad"></div>
       <div class="form-row">
         <div class="form-group"><label>Alt Kategori</label><input class="form-input" id="ug-subcat"></div>
-        <div class="form-group"><label>Miktar + Birim</label>
-          <div style="display:flex;gap:6px;">
-            <input class="form-input" id="ug-weight" style="flex:1;" type="number">
-            <input class="form-input" id="ug-unit" style="width:56px;">
-          </div>
-        </div>
+        <div class="form-group"><label>Miktar + Birim</label><div style="display:flex;gap:6px;"><input class="form-input" id="ug-weight" style="flex:1;" type="number"><input class="form-input" id="ug-unit" style="width:56px;"></div></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Kapıda Ödeme (TL)</label><input class="form-input" id="ug-cod" type="number"></div>
-        <div class="form-group"><label>EFT/Havale (TL)</label><input class="form-input" id="ug-eft" type="number"></div>
+        <div class="form-group"><label>Kapıda (TL)</label><input class="form-input" id="ug-cod" type="number"></div>
+        <div class="form-group"><label>EFT (TL)</label><input class="form-input" id="ug-eft" type="number"></div>
       </div>
-      <div class="form-group"><label>Ürün Bilgisi</label><input class="form-input" id="ug-desc"></div>
+      <div class="form-group"><label>Bilgi</label><input class="form-input" id="ug-desc"></div>
       <div class="form-group" style="display:flex;align-items:center;gap:8px;">
         <input type="checkbox" id="ug-active" style="width:auto;">
         <label for="ug-active" style="cursor:pointer;text-transform:none;letter-spacing:0;font-size:13px;color:var(--text);">Aktif</label>
       </div>
     </div>
     <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="ugGeriDon()" id="btn-ug-geri" style="display:none;">← Geri</button>
-      <button class="modal-btn modal-btn-cancel" onclick="urunGuncelleKapat()">Kapat</button>
-      <button class="modal-btn modal-btn-save" onclick="urunGuncelleKaydet()" id="btn-ug-kaydet" style="display:none;">Güncelle</button>
+      <button class="modal-btn modal-btn-cancel" onclick="window.ugGeriDon()" id="btn-ug-geri" style="display:none;">← Geri</button>
+      <button class="modal-btn modal-btn-cancel" onclick="window.urunGuncelleKapat()">Kapat</button>
+      <button class="modal-btn modal-btn-save" onclick="window.urunGuncelleKaydet()" id="btn-ug-kaydet" style="display:none;">Güncelle</button>
     </div>
   </div>
 </div>
