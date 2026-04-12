@@ -191,6 +191,13 @@ tr:hover td { background: var(--olive-pale); }
       <div class="stat-card"><div class="stat-label">Kargoda</div><div class="stat-value" id="stat-kargo">—</div><div class="stat-sub">yolda</div></div>
     </div>
 
+
+    <!-- Kapıda Ödeme Aktif Kutusu -->
+    <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;">
+      <input type="checkbox" id="kapida-aktif" checked style="width:18px;height:18px;cursor:pointer;" onchange="kapidaAktifDegistir(this.checked)">
+      <label for="kapida-aktif" style="font-size:14px;font-weight:500;cursor:pointer;color:var(--text);">Kapıda Ödeme Aktif</label>
+      <span style="font-size:12px;color:var(--muted);">Kapalıysa agent sadece havale fiyatını söyler</span>
+    </div>
     <div class="table-card">
       <div class="table-header"><h3>Son Aramalar</h3><button class="refresh-btn" onclick="loadCalls()">↻ Yenile</button></div>
       <div id="son-aramalar-container"><div class="loading">Yükleniyor...</div></div>
@@ -431,7 +438,26 @@ function showPage(name, el) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
   if (el) el.classList.add('active');
-  if (name === 'panel') { loadStats(); loadCalls(); }
+  if (name === 'panel') { 
+// Kapıda Ödeme Toggle
+async function kapidaAktifDegistir(aktif) {
+  try {
+    await fetch('/api/settings/kapida-odeme', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({aktif: aktif})
+    });
+  } catch(e) {}
+}
+async function loadKapidaAktif() {
+  try {
+    var r = await fetch('/api/settings/kapida-odeme');
+    var d = await r.json();
+    var el = document.getElementById('kapida-aktif');
+    if (el) el.checked = d.aktif !== false;
+  } catch(e) {}
+}
+
+loadStats(); loadCalls(); loadKapidaAktif(); }
   if (name === 'siparisler') loadOrders();
   if (name === 'aramalar') loadAllCalls();
   if (name === 'musteriler') loadCustomers();
@@ -735,7 +761,26 @@ async function loadDetail(callId) {
 function closeDetail(e) { if (e.target===document.getElementById('detail-overlay')) closeDetailPanel(); }
 function closeDetailPanel() { document.getElementById('detail-overlay').classList.remove('open'); }
 
-loadStats(); loadCalls();
+
+// Kapıda Ödeme Toggle
+async function kapidaAktifDegistir(aktif) {
+  try {
+    await fetch('/api/settings/kapida-odeme', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({aktif: aktif})
+    });
+  } catch(e) {}
+}
+async function loadKapidaAktif() {
+  try {
+    var r = await fetch('/api/settings/kapida-odeme');
+    var d = await r.json();
+    var el = document.getElementById('kapida-aktif');
+    if (el) el.checked = d.aktif !== false;
+  } catch(e) {}
+}
+
+loadStats(); loadCalls(); loadKapidaAktif();
 setInterval(loadStats, 30000);
 
 // ---- YENİ FONKSİYONLAR ----
@@ -859,7 +904,7 @@ window.loadUrunler = async function() {
     var rows = data.map(function(p){
       return '<tr><td><strong>'+(p.name||'')+'</strong>'+(p.subcategory?'<br><span style="font-size:11px;color:var(--muted)">'+p.subcategory+'</span>':'')+'</td><td>'+(p.category==='zeytin'?'Zeytin':'Zeytinyagi')+'</td><td>'+(p.weight||'')+' '+(p.unit||'')+'</td><td>'+(p.price_cod?p.price_cod+' TL':'-')+'</td><td>'+(p.price_eft?p.price_eft+' TL':'-')+'</td><td>'+(p.description||'-')+'</td><td>'+(p.active?'<span class="badge badge-green">Aktif</span>':'<span class="badge badge-gray">Pasif</span>')+'</td></tr>';
     });
-    el.innerHTML = '<table><thead><tr><th>Urun</th><th>Kat</th><th>Miktar</th><th>Kapida</th><th>EFT</th><th>Bilgi</th><th>Durum</th></tr></thead><tbody>'+rows.join('')+'</tbody></table>';
+    el.innerHTML = '<table><thead><tr><th>Urun</th><th>Kat</th><th>Miktar</th><th>Kapida</th><th>Havale</th><th>Bilgi</th><th>Durum</th></tr></thead><tbody>'+rows.join('')+'</tbody></table>';
   } catch(e) { document.getElementById('urunler-container').innerHTML = '<div class="empty">Hata</div>'; }
 };
 window.urunEkleKatSec = function(kat, btn) {
@@ -901,7 +946,7 @@ window.urunGuncelleKatSec = async function(kat, btn) {
     if (!_ugUrunler.length) { document.getElementById('ug-liste-icerik').innerHTML='<div class="empty">Urun yok</div>'; return; }
     document.getElementById('ug-liste-icerik').innerHTML=_ugUrunler.map(function(p,idx){
       return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--border);">'+
-        '<div><strong>'+(p.name||'')+'</strong> '+(p.weight?p.weight+' '+(p.unit||''):'')+'<br><span style="font-size:12px;color:var(--muted)">'+(p.price_cod?'Kapida: '+p.price_cod+' TL  ':'')+(p.price_eft?'EFT: '+p.price_eft+' TL':'')+'</span></div>'+
+        '<div><strong>'+(p.name||'')+'</strong> '+(p.weight?p.weight+' '+(p.unit||''):'')+'<br><span style="font-size:12px;color:var(--muted)">'+(p.price_cod?'Kapida: '+p.price_cod+' TL  ':'')+(p.price_eft?'Havale: '+p.price_eft+' TL':'')+'</span></div>'+
         '<div style="display:flex;gap:6px;"><button class="action-btn btn-ship" onclick="window.urunDuzenleAc('+idx+')">Duzenle</button>'+
         '<button class="action-btn btn-cancel" onclick="window.urunSilOnay('+idx+')">Sil</button></div></div>';
     }).join('');
@@ -955,7 +1000,7 @@ window.urunGuncelleKaydet = async function() {
       </div>
       <div class="form-row">
         <div class="form-group"><label>Kapıda (TL)</label><input class="form-input" id="ue-cod" placeholder="0" type="number"></div>
-        <div class="form-group"><label>EFT (TL)</label><input class="form-input" id="ue-eft" placeholder="0" type="number"></div>
+        <div class="form-group"><label>Havale (TL)</label><input class="form-input" id="ue-eft" placeholder="0" type="number"></div>
       </div>
       <div class="form-group"><label>Bilgi</label><input class="form-input" id="ue-desc" placeholder="Az tuzlu..."></div>
     </div>
@@ -983,7 +1028,7 @@ window.urunGuncelleKaydet = async function() {
       </div>
       <div class="form-row">
         <div class="form-group"><label>Kapıda (TL)</label><input class="form-input" id="ug-cod" type="number"></div>
-        <div class="form-group"><label>EFT (TL)</label><input class="form-input" id="ug-eft" type="number"></div>
+        <div class="form-group"><label>Havale (TL)</label><input class="form-input" id="ug-eft" type="number"></div>
       </div>
       <div class="form-group"><label>Bilgi</label><input class="form-input" id="ug-desc"></div>
       <div class="form-group" style="display:flex;align-items:center;gap:8px;">
